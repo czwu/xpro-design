@@ -1,8 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
 import * as utils from './util'
-import vue from 'vue'
-const message = vue.prototype.$message
 axios.interceptors.request.use(
   config => {
     const TOKEN = utils.getCookie('access_token')

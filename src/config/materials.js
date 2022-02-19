@@ -1,7 +1,7 @@
 /**
  * 设计器 组件列表配置
  */
- const comps = [
+ const materials = [
     {
       name: '布局组件',
       icon: 'layouts',
@@ -225,6 +225,6 @@
   }
   
   export {
-    comps, beautifierConf
+    materials, beautifierConf
   }
   

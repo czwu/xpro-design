@@ -5,7 +5,7 @@ import zhLocale from 'element-plus/lib/locale/lang/zh-cn'; // 中文
 import enLocale from 'element-plus/lib/locale/lang/en'; // 英文
 import { getUrlParams } from './util'
 
-Vue.use(VueI18n)
+
 const messages = {
   'en': Object.assign({}, enLocale), // 将我们项目中的语言包与Element的语言包进行合并
   'zh': Object.assign({}, zhLocale)
