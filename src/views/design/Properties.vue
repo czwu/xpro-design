@@ -9,38 +9,23 @@
           <span slot="label"><i class="p-icon-moxing" /> 模型管理</span>
         </el-tab-pane>
       </el-tabs>
-      <props-form
-        v-if="activeName === 'properties' && compProps && compData"
-        :properties="compProps"
-        :data="compData"
-        :all-props="compProps"
-        class="scroll-y flex-grow"
-      />
       <page-props v-if="activeName === 'properties' && showPageProps" />
       <model-panel v-if="activeName === 'models'" class="scroll-y" />
     </div>
     <div v-if="showChildEditor" class="child-editor">
-      <props-form
-        v-if="activeName === 'properties' && childProps && childData"
-        :properties="childProps"
-        :all-props="childProps"
-        :data="childData"
-        class="scroll-y flex-grow"
-      />
     </div>
   </div>
 </template>
 
 <script>
-import PropsForm from '@/components/props/PropsForm'
 import ModelPanel from '@/views/design/ModelPanel'
 import PageProps from './PageProps'
 import context from '@/common/context'
 import service from '@/common/service'
 import { uuid, setValueByPath } from '@/utils/util'
-import { bus, EVENTS } from '@/common/eventBus'
+import { bus, EVENTS } from '@/common/bus'
 export default {
-  components: { PropsForm, ModelPanel, PageProps },
+  components: { ModelPanel, PageProps },
   data() {
     return {
       activeName: 'properties',

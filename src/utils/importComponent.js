@@ -7,6 +7,6 @@ requireComponent.keys().map(path => {
   // console.log(requireComponent(path))
   // console.log(requireComponent.keys())
   if (requireComponent(path).default && requireComponent(path).default.name) {
-    Vue.component(requireComponent(path).default.name, requireComponent(path).default)
+    // Vue.component(requireComponent(path).default.name, requireComponent(path).default)
   }
 })

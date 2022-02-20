@@ -3,7 +3,7 @@ import XEUtils from "xe-utils";
 const $pre = "el-";
 const viewMap = {
   select: $pre + "select",
-  button: "ElButton"
+  button: "ElButton",
 };
 
 const getNodes = (meta, context, beforeRender) => {
@@ -22,24 +22,25 @@ const getNodes = (meta, context, beforeRender) => {
     }else{
       childNodes = getNodes(childs, context,beforeRender)
     }
-    const props = {...meta.props,...meta.attrs}
+    //TODO 检测是否可以取消析构
+    const props = {...meta.props}
     return h(resolveComponent(meta.tag || viewMap[meta.view] || meta.view), props, childNodes);
 
   }else if(typeof meta === "string"){
-    return meta
+    return h(meta)
   }
 };
 const render = (props, context) => {
   if (props.meta) {
     let { meta, beforeRender } = props;
     if (meta) {
-      return getNodes(meta,context, beforeRender)
+      return getNodes(JSON.parse(JSON.stringify(meta)),context, beforeRender)
     }
   } else {
     return h(`div`, { class: "empity-content" }, "");
   }
 };
-render.props = ["meta"];
+render.props = ["meta",'beforeRender'];
 
 export default render;
 

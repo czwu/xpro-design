@@ -58,6 +58,8 @@ module.exports = {
     }
   },
   chainWebpack(config) {
+    //解决控制态报错 
+    config.resolve.alias.set('vue-i18n', 'vue-i18n/dist/vue-i18n.cjs.js')
     // set svg-sprite-loader
     config.module
       .rule('svg')

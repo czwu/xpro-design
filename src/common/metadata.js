@@ -1,46 +1,38 @@
 import context from '@/common/context'
 
-import { bus, EVENTS } from '@/common/eventBus'
+import { emitter, EVENTS } from '@/common/bus'
+import { reactive, h } from 'vue'
 import { treeEach, type, uuid, getUrlParams } from '@/utils/util'
-import Vue from 'vue'
 
 /**
  * 元数据管理对象
  */
 class Metadata {
-  meta = {
-
-  }
-
+  meta = reactive({})
   constructor() {
     this.reset()
   }
   reset() {
-    const isComponent = getUrlParams('type') === 'components'
-    this.meta = {
-      id: (isComponent ? 'comp-' : 'page-') + uuid(8),
-      uuid: 'page',
-      name: 'layout',
-      engine: 'PageDesign',
+    //组件模式与页面模式
+    const isComponent = getUrlParams('type') === 'component'
+    const emptyMeta = {
+      uid: this.meta?.uid || (isComponent ? 'comp-' : 'page-') + uuid(8),
+      view: 'layout',
       isComponent,
-      isPageRoot: true,
-      props: {},
-      design: {
-      },
-      style: {
-        height: 'auto',
-        width: '100%'
+      isRoot: true,
+      props: {
+        span: 24,
+        style: {
+          height: 'auto',
+          width: '100%'
+        },
+
       },
       children: [],
       events: {
         methods: {
           id: 'PageMethods',
           label: '编排函数',
-          children: []
-        },
-        listener: {
-          id: 'PageListener',
-          label: '页面监听',
           children: []
         },
         codeMethods: {
@@ -66,8 +58,8 @@ class Metadata {
       },
       apis: [],
       models: [{
-        id: isComponent ? 'props' : 'params',
-        name: isComponent ? 'props' : 'params',
+        id: 'props',
+        name: 'props',
         label: isComponent ? '组件属性' : '页面参数模型',
         type: 'system',
         fields: [
@@ -82,44 +74,38 @@ class Metadata {
         ]
       }]
     }
-  }
-
-  save() {
-
-  }
-  getMeta() {
-    return this.meta
+    Object.assign(this.meta, emptyMeta)
   }
 
   /**
    * 根据组件uuid 获取组件元数据对象
-   * @param {string} id
+   * @param {string} uid
    * @returns component 元数据
    */
-  getComponentById(id) {
+  getComponentById(uid) {
     const comps = []
     this.compEach([this.meta], (comp) => {
-      if (comp.uuid === id) {
+      if (comp.uid === uid) {
         comps.push(comp)
       }
     })
     if (comps.length > 1) {
-      console.error('元数据中存在重复UUID的组件:', comps)
+      console.error('元数据中存在重复id的组件:', comps)
     }
     return comps[0]
   }
 
   /**
-   * 根据组件uuid 获取组件元数据元数据路径 [comp,parent,...rootParent]
+   * 根据组件id 获取组件元数据元数据路径 [comp,parent,...rootParent]
    * @param {string} id
    * @returns component 元数据
    */
-  getCompPathById(id) {
+  getCompPathById(uid) {
     const path = []
     const eachFn = (list) => {
       for (let i = 0; i < list.length; i++) {
         const item = list[i]
-        if (item.uuid === id) {
+        if (item.uid === uid) {
           path.push(item)
           return true
         } else if (Array.isArray(item.children) && item.children.length) {
@@ -132,7 +118,7 @@ class Metadata {
             path.push(item)
             return true
           }
-        } else if (item.config && item.config.uuid) {
+        } else if (item.config && item.config.uid) {
           if (eachFn([item.config])) {
             path.push(item)
             return true
@@ -156,8 +142,8 @@ class Metadata {
     return path
   }
 
-  getParent(uuid) {
-    const arr = this.getCompPathById(uuid)
+  getParent(uid) {
+    const arr = this.getCompPathById(uid)
     return arr[1]
   }
   copyNode(comp) {
@@ -206,16 +192,16 @@ class Metadata {
     })
   }
 
-  removeComponent(uuid) {
-    const comps = this.getCompPathById(uuid)
+  removeComponent(uid) {
+    const comps = this.getCompPathById(uid)
     const currComponent = comps.shift()
     if (currComponent.design && currComponent.design.mapping) {
       window.getApp().$message.warning('内部组件无法删除')
       return
     }
     const parent = comps.shift()
-    bus.$emit(EVENTS.DESIGN_COMPONENT_REMOVE, uuid)
-    // bus.$emit(EVENTS.COMPONENT_DRAG_END)
+    emitter.emit(EVENTS.DESIGN_COMPONENT_REMOVE, uid)
+    // emitter.emit(EVENTS.COMPONENT_DRAG_END)
     if (parent) {
       if (Array.isArray(parent.children)) {
         parent.children = parent.children.filter(item => item !== currComponent)
@@ -227,24 +213,24 @@ class Metadata {
           parent.children = []
         }
       }
-      bus.$emit(EVENTS.METADATA_STEP_UPDATE)
+      emitter.emit(EVENTS.METADATA_STEP_UPDATE)
     }
   }
 
   // 选中组件
-  selectComponent(uuid, e) {
-    const compPath = this.getCompPathById(uuid)
+  selectComponent(uid, e) {
+    const compPath = this.getCompPathById(uid)
     if (compPath.length) {
       if (context.activeComponent === compPath[0]) {
         return
       }
       this.unSelected()
       context.activeComponent = compPath[0]
-      // document.querySelector('#design_panel').querySelector(`[uuid="${uuid}"]`).classList.add('design-selected')
-      Vue.set(context.activeComponent.design, 'selected', true)
+      // document.querySelector('#design_panel').querySelector(`[id="${id}"]`).classList.add('design-selected')
+      context.activeComponent.selected = true
       context.activeCompPath = compPath
       // 触发面板组件被选中事件, 并将 组件与其路径当做参数发送出去
-      bus.$emit(EVENTS.COMPONENT_SELECTED, compPath[0], compPath[1], e)
+      emitter.emit(EVENTS.COMPONENT_SELECTED, compPath[0], compPath[1], e)
     }
   }
 
@@ -253,7 +239,7 @@ class Metadata {
     context.activeMeta = meta
     if (meta.design) {
       meta.design.selected = true
-      bus.$emit(EVENTS.MEATA_SELECTED, meta, parent)
+      emitter.emit(EVENTS.MEATA_SELECTED, meta, parent)
     }
   }
 
@@ -281,8 +267,8 @@ class Metadata {
     return JSON.stringify(this.meta)
   }
   /**
-   * 代码模式修改元数据后需要刷新uuid生成器序列号
-   * 通过遍历当前元数据对象,获取到当前所有uuid,并将最大值设置到上下文对象的uuid生成器中,避免出现uuid重复
+   * 代码模式修改元数据后需要刷新id生成器序列号
+   * 通过遍历当前元数据对象,获取到当前所有id,并将最大值设置到上下文对象的id生成器中,避免出现id重复
    */
   updateIdStore() {
     this.compEach(this.meta.children, (item) => {
@@ -341,4 +327,5 @@ class Metadata {
   }
 }
 const metadata = new Metadata()
+window.metadata = metadata
 export default metadata

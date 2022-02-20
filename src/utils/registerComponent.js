@@ -8,12 +8,12 @@ export default function registerAsync(asyncComponents, appCode) {
     window.$async_components = window.$async_components || {}
     //判断是否已经注册
     if(!window.$async_components[code]){
-      Vue.component(`async-component-${code}`, function(resolve, reject) {
-        service.queryComponentByCode(code).then(({data})=>{
-          window.$async_components[code] = true
-          resolve(getConfig(data), appCode)
-        })
-      })
+      // Vue.component(`async-component-${code}`, function(resolve, reject) {
+      //   service.queryComponentByCode(code).then(({data})=>{
+      //     window.$async_components[code] = true
+      //     resolve(getConfig(data), appCode)
+      //   })
+      // })
     }
 
   })

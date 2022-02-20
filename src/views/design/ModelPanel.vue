@@ -119,7 +119,7 @@
 import metadata from '@/common/metadata'
 import service from '@/common/service'
 import datamodel from '@/common/datamodel'
-import { bus, EVENTS } from '@/common/eventBus'
+import { bus, EVENTS } from '@/common/bus'
 export default {
   components: {},
   data() {
