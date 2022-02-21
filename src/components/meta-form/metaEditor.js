@@ -1,12 +1,6 @@
-import { emitter, EVENTS } from '@/common/eventBus'
+import { emitter, EVENTS } from '@/common/bus'
 import { type } from '@/utils/util'
 import i18n from '@/utils/i18n'
-// function newLayout(children) {
-//   return type(children) !== 'string' ? children : {
-//     name: 'div',
-//     children
-//   }
-// }
 const Editors = {
   editors: {},
   get(name) {
@@ -17,7 +11,7 @@ const Editors = {
   },
   getEditor(prop, changeFn) {
     const type = prop.type
-    return Editors.get(type)(prop, changeFn)
+    return this.get(type)(prop, changeFn)
   }
 }
 // 文本
