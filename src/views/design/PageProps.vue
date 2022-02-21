@@ -55,7 +55,7 @@
 
 <script>
 import Metadata from '@/common/metadata'
-import { bus, EVENTS } from '@/common/eventBus'
+import { bus, EVENTS } from '@/common/bus'
 import metadata from '@/common/metadata'
 import { getUrlParams } from '@/utils/util'
 export default {

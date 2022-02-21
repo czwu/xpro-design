@@ -49,8 +49,8 @@ li {
     margin-left: 5px;
 }
 
-.panel.layout[uuid],
-.panel-header .layout[uuid] {
+.panel.layout[uid],
+.panel-header .layout[uid] {
     padding: 0px;
 }
 .design-selected {
@@ -93,7 +93,7 @@ li {
         padding: 5px;
     }
     .el-table__row{
-        [uuid]:not(.el-input):not(.el-select){
+        [uid]:not(.el-input):not(.el-select){
             &::after {
                 content: none !important;
             }
@@ -112,7 +112,7 @@ li {
         font-size: 14px;
         padding-right: 8px;
     }
-    [uuid]:not(.el-input):not(.el-select):not(.el-cascader){
+    [uid]:not(.el-input):not(.el-select):not(.el-cascader){
         box-sizing: border-box;
         border: 1px dashed #ccc;
         min-height:10px;
@@ -163,7 +163,7 @@ li {
         min-height: 30px;
     }
     .el-input-group__prepend,.el-input-group__append{
-        &>[uuid]{
+        &>[uid]{
             min-height:24px !important;
             box-sizing: border-box;
             min-width:80px;

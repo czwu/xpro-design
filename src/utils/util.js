@@ -180,40 +180,40 @@ function options(obj) {
 }
 
 function getComponentId(el, designMode) {
-  let uuid = el.getAttribute('uuid')
+  let uid = el.getAttribute('uid')
   const mapping = el.getAttribute('mapping') ? [el.getAttribute('mapping')] : []
-  if (!uuid) {
+  if (!uid) {
     let parent = el.parentElement
     while (parent) {
-      uuid = parent.getAttribute('uuid')
+      uid = parent.getAttribute('uid')
       const mappingPath = parent.getAttribute('mapping')
       if (mappingPath) {
         mapping.push(mappingPath)
       }
-      if (uuid) {
+      if (uid) {
         break
       }
       parent = parent.parentElement
     }
   }
-  return designMode ? { uuid, mapping: mapping.reverse().join('.') } : uuid
+  return designMode ? { uid, mapping: mapping.reverse().join('.') } : uid
 }
 
 function getComponentId2(el) {
-  let uuid = el.getAttribute('uuid')
-  let mapping = el.getAttribute('mapping')
-  if (!uuid || mapping) {
+  let uid = el.getAttribute('uid')
+  let mapping = el.getAttribute('uid')
+  if (!uid || mapping) {
     let parent = el.parentElement
     while (parent) {
-      uuid = parent.getAttribute('uuid')
+      uid = parent.getAttribute('uid')
       mapping = parent.getAttribute('mapping')
-      if (uuid && !mapping) {
+      if (uid && !mapping) {
         break
       }
       parent = parent.parentElement
     }
   }
-  return uuid
+  return uid
 }
 
 function clone(any) {

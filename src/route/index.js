@@ -4,8 +4,8 @@ import Designer from "../views/design/Designer.vue";
 
 const routes = [
   {
-    path: "/index",
-    name: "Home",
+    path: "/page-design",
+    name: "page-design",
     component: Designer
   }
 ];

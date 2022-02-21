@@ -1,35 +1,15 @@
 <template>
   <div class="flex-row flex-grow" :class="{ dragging: dragging }"  @click="hideMenu">
-    <materials class=""></materials>
-    <div class="flex-col flex-grow" style="width: 0">
+    <materials></materials>
+    <div class="flex-col flex-grow" >
       <div class="toolbar flex-row">
         <div class="space" style="width: 10px" />
         <div class="space flex-grow" style="line-height:30px">
-          <el-tabs v-model="activePage" type="card" :addable="true" @tab-click="pageChange" @tab-add="showPageTree" @tab-remove="pageRemove">
-            <el-tab-pane v-for="page in pageList" :key="page.id" :label="page.name" :name="page.id" :closable="page.closable" />
+          <el-tabs v-model="activePage" type="card" :addable="true" @tab-click="pageChange" @tab-add="showPageSelector" @tab-remove="pageRemove">
+            <el-tab-pane v-for="page in pages" :key="page.id" :label="page.name" :name="page.id" :closable="page.closable" />
           </el-tabs>
         </div>
-        <el-button-group style="flex-shrink:0;margin-left:10px">
-          <el-button
-            type="primary"
-            icon="x-icon-save"
-            @click="savePage"
-          >保存</el-button>
-          <el-button
-            icon="x-icon-json"
-            @click="showJson"
-          >元数据</el-button>
-          <el-button
-            @click="showCss"
-            icon="x-icon-css"
-          >CSS</el-button>
-          <el-button type="danger" icon="el-icon-delete" @click="clear">清空</el-button>
-          <el-button
-            type="warning"
-            icon="x-icon-debug"
-            @click="preview"
-          >预览/调试</el-button>
-        </el-button-group>
+        <tools></tools>
         <div class="space" style="width: 10px" />
       </div>
       <div
@@ -38,33 +18,53 @@
         :class="{ dragging: dragging }"
         @contextmenu="showContextMenu"
       >
-      <x-render :meta="meta" />
+     <x-render :meta="pageMeta" :beforeRender='beforeRender'/> 
       </div>
     </div>
     <div class="flex-col properties">
       <!-- <properties /> -->
     </div> 
- 
-
   </div>
 </template>
 
 <script>
 import Materials from './Materials.vue'
-
+import Tools from './Tools.vue'
 import {ref, reactive} from 'vue'
 import Properties from './Properties'
+import PageMeta from '@/common/metadata'
+import beforeRender from '@/common/beforeRender'
+import '@/config/index.js'
 export default {
      setup(props, context){
          const dragging = ref('')
-         const pageList = reactive([])
+         const activePage = ref('')
+         const pages = reactive([])
+         const pageMeta = PageMeta.meta 
          return {
              dragging,
-             pageList
+             pages,
+             activePage,
+             pageMeta,
+             beforeRender
          }
      },
      components:{
-       Properties,Materials
+       Properties,Materials,Tools
+     },
+     methods:{
+       pageChange(){
+         
+       },
+       showPageSelector(){
+
+       },
+       pageRemove(){
+
+       },
+       showContextMenu(){
+
+       }
      }
 }
 </script>
