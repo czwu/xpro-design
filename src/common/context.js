@@ -27,14 +27,10 @@ const context = {
     const comp = this.components[compName]
     const conf = comp ? comp.getConfig(...args) : {}
     conf.uid = this.uuid(compName)
-    conf.design = conf.design || {}
     Object.assign(conf,{
       selected: false,
-      span: conf.design.autoWidth ? 0 : conf.design.span || 24
+      span: conf.autoWidth ? 0 : conf.span || 24
     })
-    if (compName === 'v-table') {
-      conf.children.pid = conf.uuid
-    }
     return conf
   },
   // 当前设计面板选中的组件

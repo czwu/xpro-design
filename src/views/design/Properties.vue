@@ -1,136 +1,146 @@
 <template>
-  <div class="flex-col flex-grow" style="position: relative;height:0px">
-    <div class="flex-col flex-grow" style="overflow:hidden" @mousedown="showChildEditor=false">
-      <el-tabs v-model="activeName" class="right-tabs">
+  <div class="flex-col flex-grow" style="position: relative; height: 0px;">
+    <div
+      class="flex-col flex-grow"
+      style="overflow: hidden;"
+      @mousedown="showChildEditor = false"
+    >
+      <el-tabs v-model="activeTab" class="right-tabs">
         <el-tab-pane name="properties">
-          <span slot="label"><i class="p-icon-setting" /> 属性配置</span>
+          <template #label>
+            <span><i class="p-icon-setting" /> 属性配置</span>
+          </template>
         </el-tab-pane>
         <el-tab-pane name="models">
-          <span slot="label"><i class="p-icon-moxing" /> 模型管理</span>
+          <template #label>
+            <span><i class="p-icon-moxing" /> 数据管理</span>
+          </template>
         </el-tab-pane>
       </el-tabs>
-      <page-props v-if="activeName === 'properties' && showPageProps" />
-      <model-panel v-if="activeName === 'models'" class="scroll-y" />
+      <meta-form
+        v-if="activeTab === 'properties' && properties && meta"
+        :properties="properties"
+        :meta="meta"
+        class="scroll-y flex-grow"
+      />
+      <!-- <page-props v-if="activeTab === 'properties' && pagePropsVisible" />
+      <model-panel v-if="activeTab === 'models'" class="scroll-y" /> -->
     </div>
-    <div v-if="showChildEditor" class="child-editor">
+    <div v-if="childFormVisible" class="child-editor">
+      <meta-form
+        v-if="activeTab === 'properties' && childProps && childMeta"
+        :properties="childProps"
+        :meta="childMeta"
+        class="scroll-y flex-grow"
+      />
     </div>
   </div>
 </template>
 
 <script>
-import ModelPanel from '@/views/design/ModelPanel'
-import PageProps from './PageProps'
-import context from '@/common/context'
-import service from '@/common/service'
-import { uuid, setValueByPath } from '@/utils/util'
-import { bus, EVENTS } from '@/common/bus'
-export default {
-  components: { ModelPanel, PageProps },
-  data() {
+// import ModelPanel from '@/views/design/ModelPanel'
+// import PageProps from './PageProps'
+import { defineComponent, ref, reactive, onMounted } from "vue";
+import context from "@/common/context";
+import { uuid } from "@/utils/util";
+import { emitter, EVENTS } from "@/common/bus";
+export default defineComponent({
+  components: {},
+  setup(props) {
+    const childFormVisible = ref(false);
+    const activeTab = ref("properties");
+    const properties = ref(null);
+    const meta = ref(null);
+    const childProperties = ref(null);
+    const pagePropsVisible = ref(false);
+    const childMeta = ref(null);
+
+    onMounted(() => {
+      emitter.on(EVENTS.COMPONENT_SELECTED, (compMeta) => {
+        const view = compMeta._view_ || compMeta.view;
+        if (!compMeta.isRoot) {
+          // 关闭子属性编辑器
+          if (childFormVisible.value) {
+            childFormVisible.value = false;
+          }
+          //重新获取选中组件的属性编辑器配置
+          properties.value = context.components[view].getProperties(compMeta);
+          // addPropId(this.properties);
+          meta.value = compMeta;
+        } else {
+          pagePropsVisible.value = true;
+          meta.value = null;
+        }
+        childFormVisible.value = false;
+        context.activeMeta = null;
+
+        activeTab.value = "properties";
+      });
+    });
     return {
-      activeName: 'properties',
-      compProps: null,
-      compData: null,
-      childProps: null,
-      childData: null,
-      showPageProps: false,
-      showChildEditor: false
-    }
+      activeTab,
+      properties,
+      meta,
+      childMeta,
+      childProperties,
+      childFormVisible,
+      pagePropsVisible,
+    };
   },
   mounted() {
-    bus.$on(EVENTS.COMPONENT_SELECTED, (comp, parent) => {
-      const name = comp._name_ || comp.name
-      if (name === 'async-component' && comp.code) {
-        // 动态组件属性面板初始化
-        const designMeta = window.vbusiness?.[comp.code]
-        const callback = (data) => {
-          this.showPageProps = false
-          this.compProps = context.components[name].getProperties(comp, data)
-          this.addPropId(this.compProps)
-          this.compData = comp
-          this.showChildEditor = false
-          context.activeMeta = null
-          this.activeName = 'properties'
-        }
-        if (designMeta) {
-          callback(designMeta)
-        } else {
-          service.queryComponentByCode(comp.code).then(({ data }) => {
-            const designMeta = JSON.parse(data.releaseJson)
-            setValueByPath(window, `vbusiness.${comp.code}`, designMeta)
-            callback(designMeta)
-          })
-        }
-      } else {
-        if (parent) {
-          this.showPageProps = false
-          this.compProps = context.components[name].getProperties(comp)
-          this.addPropId(this.compProps)
-          this.compData = comp
-        } else {
-          this.showPageProps = true
-          this.compData = null
-        }
-        this.showChildEditor = false
-        context.activeMeta = null
-
-        this.activeName = 'properties'
-      }
-    })
-    bus.$on(EVENTS.MEATA_SELECTED, (comp, parent) => {
-      this.showChildEditor = false
-      const name = comp._name_ || comp.name
-      this.showPageProps = false
-      this.compProps = context.components[name].getProperties(comp)
-      this.addPropId(this.compProps)
-      this.compData = comp
-      this.activeName = 'properties'
-    })
-    bus.$on(EVENTS.SHOW_MODEL_PANEL, () => {
-      this.activeName = 'models'
-    })
-    bus.$on(EVENTS.SHOW_CHILD_PROP, (meta, parent) => {
-      const name = meta._name_ || meta.name
-      this.childProps = context.components[name].getProperties(meta)
-      this.addPropId(this.childProps)
-      this.childData = meta
-      this.showChildEditor = true
-    })
+    emitter.on(EVENTS.MEATA_SELECTED, (meta, parent) => {
+      this.childFormVisible.value = false;
+      const name = meta._view_ || meta.view;
+      this.pagePropsVisible.value = false;
+      this.properties.value = context.components[name].getProperties(meta);
+      this.addPropId(this.properties.value);
+      this.meta.value = meta;
+      this.activeTab.value = "properties";
+    });
+    emitter.on(EVENTS.SHOW_MODEL_PANEL, () => {
+      this.activeTab.value = "models";
+    });
+    emitter.on(EVENTS.SHOW_CHILD_PROP, (meta) => {
+      const view = meta._view_ || meta.view;
+      this.childProperties.value = context.components[view].getProperties(meta);
+      this.addPropId(this.childProperties.value);
+      this.childMeta.value = meta;
+      this.childFormVisible.value = true;
+    });
   },
   methods: {
     addPropId(props) {
-      props.forEach((item) => {
-        item._id_ = uuid(12)
-        if (Array.isArray(item.properties)) {
-          this.addPropId(item.properties)
-        }
-        if (Array.isArray(item.columns)) {
-          this.addPropId(item.columns)
-        }
-      })
-    }
-  }
-}
+      // props.forEach((item) => {
+      //   item._id_ = uuid(12);
+      //   if (Array.isArray(item.properties)) {
+      //     this.addPropId(item.properties);
+      //   }
+      //   if (Array.isArray(item.columns)) {
+      //     this.addPropId(item.columns);
+      //   }
+      // });
+    },
+  },
+});
 </script>
 <style lang="scss" scoped>
 .scroll-y {
   overflow-y: auto;
   overflow-x: hidden;
 }
-.child-editor{
-    position: absolute;
-    right: 300px;
-    width: 300px;
-    max-height:300px;
-    max-height:calc(100% - 70px);
-    overflow-y:auto;
-    top: 50px;
-    height: auto;
-    background: #fff;
-    border: 1px solid #f2f2f2;
-    z-index: 1000;
-    box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
-
+.child-editor {
+  position: absolute;
+  right: 300px;
+  width: 300px;
+  max-height: 300px;
+  max-height: calc(100% - 70px);
+  overflow-y: auto;
+  top: 50px;
+  height: auto;
+  background: #fff;
+  border: 1px solid #f2f2f2;
+  z-index: 1000;
+  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
 }
 </style>
 <style lang="scss">

@@ -9,6 +9,7 @@ const EVENTS = {
   DESIGN_COMPONENT_REMOVE: '设计面板组件移除事件',
   MATERIAL_DRAG_START: '开始拖拽物料',
   MATERIAL_DRAG_STOP: '结束拖拽物料',
+  SHOW_META_EDITOR: '显示元数据',
   SHOW_MODEL_PANEL: '显示模型面板',
   SHOW_MODEL_EDITOR: '显示模型编辑详情',
   SHOW_DESIGN_MSG: '设计器消息提示',

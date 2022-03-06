@@ -1,5 +1,5 @@
 import loadScript from './loadScript'
-import ELEMENT from 'element-ui'
+import { ElLoading } from 'element-plus'
 
 let beautifierObj
 
@@ -8,19 +8,16 @@ export default function loadBeautifier(cb) {
     cb(beautifierObj)
     return
   }
-
-  const loading = ELEMENT.Loading.service({
+  const loading = ElLoading.service({
     fullscreen: true,
     lock: true,
     text: '格式化资源加载中...',
     spinner: 'el-icon-loading',
     background: 'rgba(255, 255, 255, 0.5)'
   })
-
   loadScript('./static/beautifier.min.js', () => {
     loading.close()
-    // eslint-disable-next-line no-undef
-    beautifierObj = beautifier
+    beautifierObj = window.beautifier
     cb(beautifierObj)
   })
 }

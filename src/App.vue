@@ -1,5 +1,6 @@
 <script setup>
 import { ref, reactive} from 'vue'
+import Designer from './views/design/Designer.vue'
 const data = reactive({
   view:'button',
   props:{
@@ -7,12 +8,9 @@ const data = reactive({
   },
   children:'sdfdfsdf'
 })
-const name = ref("button1")
-
 </script> 
-
 <template>
-  <router-view></router-view>
+  <Designer></Designer>
 </template>
 
 <style lang="scss" >

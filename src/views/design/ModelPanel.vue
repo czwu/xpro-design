@@ -66,7 +66,7 @@
               placeholder="搜索/过滤"
               clearable
               style="width: 100%"
-              size="mini"
+              size="small"
               @input="filterModelFields(model)"
             >
               <i slot="suffix" class="el-input__icon el-icon-search" />

@@ -1,15 +1,15 @@
 import { getComponentId, options, uuid } from '@/utils/util'
 import { emitter, EVENTS } from '@/common/bus'
 export default {
-  common: {
     // 组件ID, 只读
-    compId() {
+    uid() {
       return {
         label: '组件编号',
-        mapping: 'id',
+        mapping: 'uid',
         type: 'text',
         value: '',
-        vif: 'uuid'
+        i18n:false,
+        vif: 'uid'
       }
     },
     // 组件类型, 只读
@@ -59,9 +59,6 @@ export default {
         mapping: 'props.class',
         type: 'input',
         value: '',
-        multiple: true,
-        filterable: true,
-        allowCreate: true,
         help: '添加自定义样式类名,多选请用逗号分割'
       }, prop)
     },
@@ -269,7 +266,7 @@ export default {
     span() {
       return {
         label: '宽度',
-        mapping: 'design.span',
+        mapping: 'span',
         type: 'slider',
         value: 24,
         max: 24,
@@ -293,18 +290,13 @@ export default {
     width(param = {}) {
       return Object.assign({
         label: '宽度',
-        mapping: 'style.width',
+        mapping: 'props.style.width',
         type: 'input',
         value: '',
         clearable: true,
         append: 'px',
-        format(val, isEdit) {
-          if (isEdit) {
-            return val ? parseInt(val) : ''
-          } else {
-            return val ? parseInt(val) + 'px' : ''
-          }
-        },
+        format:(val)=>  val ? parseInt(val) : '',
+        valueFormat:(val)=>  val ? parseInt(val)+'px' : '',
         help: '像素宽度,该设置优先级高于栅格宽度,设置该项后 栅格宽度将不生效'
       }, param)
     },
@@ -436,7 +428,7 @@ export default {
         label: '组件尺寸',
         mapping: 'props.size',
         type: 'radio',
-        options: options({ medium: '中等', small: '较小', mini: '迷你' }),
+        options: options({large:'较大',default: '默认', small: '较小', }),
         value: 'small'
       }
     },
@@ -444,26 +436,11 @@ export default {
       return [
         { type: 'divider', label: '权限控制' },
         {
-          label: '权限',
-          mapping: 'design.perm',
-          type: 'bool',
-          value: false,
-          help: '是否做权限控制',
-          onChange(val, meta) {
-            if (val) {
-              meta.design.permLabel = i18n.t(meta.design.slotText) || ''
-              // 生成权限唯一编码, 如果已存在,则使用以前的,否则生成新的
-              meta.design.permId = meta.design.permId || uuid(32)
-              return true
-            }
-          }
-        }, {
-          label: '权限别名',
-          mapping: 'design.permLabel',
+          label: '权限编码',
+          mapping: 'permission',
           type: 'input',
           value: '',
-          vif: 'design.perm',
-          help: '用于授权的标识名称'
+          help: '根据权限编码控制组件是否显示，需要结合权限指令使用'
         }
       ]
     },
@@ -558,5 +535,4 @@ export default {
         // }
       ]
     }
-  }
 }

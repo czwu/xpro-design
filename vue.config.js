@@ -76,10 +76,6 @@ module.exports = {
         symbolId: 'icon-[name]'
       })
       .end()
-    config.plugin('provide')
-      .use(webpack.ProvidePlugin, [{
-        '_': 'lodash'
-      }])
   }
   // pluginOptions: {
   //   dll: {

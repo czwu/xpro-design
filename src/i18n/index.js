@@ -1,14 +1,17 @@
 import { createI18n } from 'vue-i18n'
 
 const i18n = createI18n({
-  locale: 'chs', // set locale
+  locale: 'zh', // set locale
+  fallbackLocale: 'ch',
+  globalInjection:true,
+  legacy: false,
   messages: {
-    chs: {
+    zh: {
       message: {
         hello: '你好世界',
       },
     },
-    eng: {
+    en: {
       message: {
         hello: 'hello world',
       },

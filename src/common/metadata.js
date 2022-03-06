@@ -8,8 +8,9 @@ import { treeEach, type, uuid, getUrlParams } from '@/utils/util'
  * 元数据管理对象
  */
 class Metadata {
-  meta = reactive({})
+  meta = {}
   constructor() {
+    this.meta = reactive({})
     this.reset()
   }
   reset() {
@@ -31,12 +32,12 @@ class Metadata {
       children: [],
       events: {
         methods: {
-          id: 'PageMethods',
+          id: 'methods',
           label: '编排函数',
           children: []
         },
         codeMethods: {
-          id: 'PageCodeMethods',
+          id: 'codeMethods',
           label: '自定义函数',
           children: []
         },
@@ -60,7 +61,7 @@ class Metadata {
       models: [{
         id: 'props',
         name: 'props',
-        label: isComponent ? '组件属性' : '页面参数模型',
+        label: '属性参数',
         type: 'system',
         fields: [
 
@@ -74,6 +75,7 @@ class Metadata {
         ]
       }]
     }
+   
     Object.assign(this.meta, emptyMeta)
   }
 
@@ -245,7 +247,7 @@ class Metadata {
 
   unSelected() {
     if (context.activeComponent) {
-      Vue.set(context.activeComponent.design, 'selected', false)
+      context.activeComponent.selected = false
     }
     var dom = document.querySelector('#design_panel')
     if (dom) {
