@@ -8,14 +8,15 @@ context.components.layout = {
     return {
       uid: "",
       view: "layout",
+      span:24,
+     
       props: {
+        layout: "row",
         style: {
           "flex-wrap": "wrap",
         },
-        span: 24,
         class: []
       },
-      layout: "row",
       children: []
     };
   },
@@ -42,23 +43,56 @@ context.components.layout = {
         group: "常用配置",
         properties: [
           Props.uid(),
-          // Props.span(),
+          Props.span(),
           Props.width(),
-          // Props.height(),
-          // Props.layout(),
+          Props.height(),
+          Props.layout(),
         ],
       },
       {
         group: "高级配置",
         properties: [
-          // Props.wrap(),
-          // Props.flexibility(),
-          // Props.justify(),
+          {
+            label: '自动换行',
+            mapping: 'style.flex-wrap',
+            type: 'bool',
+            value: false,
+            format(val) {
+              return !!val
+            },
+            valueFormat(val){
+              return val ? 'wrap' : ''
+            },
+            vif: (meta) => { return meta.props.layout === 'row' },
+            help: '是否允许子组件超出当前行宽度后换行'
+          },
+          {
+            label: '弹性',
+            mapping: 'props.style.flex-grow',
+            type: 'bool',
+            value: false,
+            format(val) {
+              return !!val
+            },
+            valueFormat(val){
+              return  val ? 1 : ''
+            },
+            help: '组件是否自动填充父组件剩余空间,如果多组件设置了弹性,则平分剩余空间(父组件为flex布局时生效)'
+          },
+          {
+            label: '对齐方式',
+            mapping: 'props.style.justify-content',
+            type: 'select',
+            options: ['flex-start', 'flex-end', 'center', 'space-between', 'space-around'],
+            value: '',
+            clearable: true,
+            help: '内容对齐方式,具体请查看flex 布局 justify-content详细介绍'
+          },
           // // Props.scroll(),
-          // Props.class(),
-          // Props.vif(),
-          // ...Props.vfor(),
-          // ...Props.styles(),
+         Props.class(),
+         Props.vif(),
+          ...Props.vfor(),
+          ...Props.styles(),
         ],
       },
     ];

@@ -1,112 +1,205 @@
 import { emitter, EVENTS } from "@/common/bus";
 import { type } from "@/utils/util";
 import { useI18n } from "vue-i18n";
-import {h, resolveComponent} from 'vue'
-const COMMON_SIZE = "small";
-const Editors = {
-  editors: {},
+import { h, resolveComponent, ref } from 'vue'
+import props from "@/config/props";
+
+export default {
+  /**
+   * 获取编辑器构造器
+   * @param {String} name 
+   * @returns 
+   */
   get(name) {
-    return this.editors[name] || this.editors.input;
+    return this[name] || this.input
   },
+
+  /**
+   * 注册新的元数据编辑器或渲染器组件
+   * @param {String} name 
+   * @param {Function} fn 
+   */
   register(name, fn) {
     this.editors[name] = fn;
   },
-  getEditor(prop, changeFn) {
-    const type = prop.type;
-    return this.get(type)(prop, changeFn);
-  },
-};
-// 文本
-Editors.register("text", (prop) => {
-  return h('span',prop.i18n ? useI18n().t(prop.value) : prop.value);
-});
-// 输入框
-Editors.register("input", (prop, changeFn) => {
-  const conf = {
-        modelValue: prop.format ? prop.format(prop.value) : prop.value,
-        clearable: prop.clearable,
-        size: COMMON_SIZE,
-        onInput(val) {
-          let value = prop.valueFormat? prop.valueFormat(val) : val
-          changeFn(value, prop);
-        },
-      }
-  let slots = null
-  if (prop.append) {
-    const type = typeof prop.append;
-    slots = {
-      append:
-        type === "string"
-          ? ()=>prop.append
-          : ()=>Editors.getEditor(prop.append, changeFn),
-    };
-  }
-  return h(resolveComponent('el-input'), conf , slots);
-});
 
-// 下拉选择器
-Editors.register("select", (prop, changeFn) => {
-  const children = prop.options.map((option) => {
-    return {
-      view: "option",
-      props:
-        type(option) !== "object"
-          ? { label: option, value: option }
-          : {
-              label: option[prop.labelKey || "label"],
-              value: option[prop.valueKey || "value"],
-            },
-    };
-  });
-  return {
-    view: "select",
-    props: {
-      value: prop.value, // 默认值
+  /**
+   * 创建编辑器实例
+   * @param {Object} prop  组件配置项
+   * @param {Function} change  onChange回调
+   * @returns 
+   */
+  create(prop, change) {
+    const type = prop.type
+    return this.get(type)(prop, change)
+  },
+  /**
+   * 文本渲染组件 支持i18n
+   * @param {*} prop 
+   * @returns 
+   */
+  text(prop) {
+    return h('span', {style:{fontWeight:'bold'}},prop.i18n ? useI18n().t(prop.value) : prop.value);
+  },
+
+  divider(prop) {
+    return h(resolveComponent('el-divider'), ()=>prop.title);
+  },
+
+  /**
+   * 文本框输入组件
+   * @param {Object} prop  组件配置项
+   * @param {Function} change  onChange回调
+   */
+  input(prop, change) {
+    const conf = {
+      modelValue: prop.format ? prop.format(prop.value) : prop.value,
+      clearable: prop.clearable,
+      placeholder:prop.placeholder,
+      onInput(val) {
+        let value = prop.valueFormat ? prop.valueFormat(val) : val
+        change(value, prop);
+      },
+    }
+    let slots = null
+    if (prop.append) {
+      const type = typeof prop.append;
+      slots = {
+        append:
+          type === "string"
+            ? () => prop.append
+            : () => Editors.getEditor(prop.append, change),
+      };
+    }
+    return h(resolveComponent('el-input'), conf, slots);
+  },
+
+  /**
+ * 下拉框组件
+ * @param {Object} prop  组件配置项
+ * @param {Function} change  onChange回调
+ */
+  select(prop, change) {
+    const children = prop.options.map((option) => {
+      const props = type(option) !== "object" ? { label: option, value: option } : { label: option[prop.labelKey || "label"], value: option[prop.valueKey || "value"] }
+      return h(resolveComponent('el-option'), props)
+    });
+    return h(resolveComponent('el-select'), {
+      modelValue: prop.value, // 默认值
       disabled: prop.disabled, // 是否禁用
       multiple: prop.multiple, // 是否可多选
       placeholder: prop.placeholder, // 占位符
       clearable: prop.clearable, // 是否允许清空
-      "allow-create": prop.allowCreate,
+      allowCreate: prop.allowCreate,
       filterable: prop.filterable,
-      size: "small",
-    },
-    on: {
-      input: (value) => {
-        changeFn(value, prop);
+      style:props.style,
+      onChange(value) {
+        change(value, prop);
       },
-    },
-    style: {
-      width: prop.width,
-    },
-    children,
-  };
-});
+    }, () => children)
+  },
 
-// 单选
-Editors.register("radio", (prop, changeFn) => {
-  const children = prop.options.map((op) => {
-    const { value, label } =
-      typeof op === "object" ? op : { value: op, label: op };
-    return {
-      view: "el-radio-button",
-      props: {
-        label: value,
+
+  /**
+* 滑块组件
+* @param {Object} prop  组件配置项
+* @param {Function} change  onChange回调
+*/
+  slider(prop, change) {
+    return h(resolveComponent('el-slider'), {
+      modelValue: prop.value, // 默认值
+      max: prop.max,
+      min: prop.min,
+      marks: prop.marks,
+      range: prop.range,
+      onInput(value) {
+        change(value, prop);
       },
-      children: label,
-    };
-  });
+    })
+  },
+
+
+  /**
+* 单选组件
+* @param {Object} prop  组件配置项
+* @param {Function} change  onChange回调
+*/
+  radio(prop, change) {
+    const children = prop.options.map((option) => {
+      const props = type(option) !== "object" ? { label: option, value: option } : { label: option[prop.labelKey || "label"], value: option[prop.valueKey || "value"] }
+      return h(resolveComponent('el-radio-button'), { label: props.value }, () => props.label)
+    });
+    return h(resolveComponent('el-radio-group'), {
+      modelValue: prop.value, // 默认值
+      onChange(value) {
+        change(value, prop);
+      }
+    }, () => children)
+  },
+
+  /**
+  * bool值勾选的checkbox 组件
+  * @param {Object} prop  组件配置项
+  * @param {Function} change  onChange回调
+  */
+  bool(prop, change) {
+    return h(resolveComponent('el-checkbox'), {
+      modelValue: prop.format ? prop.format(prop.value) : prop.value,
+      clearable: prop.clearable,
+      onChange(val) {
+        let value = prop.valueFormat ? prop.valueFormat(val) : val
+        change(value, prop);
+      },
+    })
+  },
+
+
+  /**
+  * bool值勾选的checkbox 组件
+  * @param {Object} prop  组件配置项
+  */
+  button(prop) {
+    return h(resolveComponent('el-button'), {
+      icon: prop.icon ? resolveComponent(prop.icon) : '',
+      type: prop.btnType,
+      style: prop.style,
+      onClick:prop.onClick,
+    },()=> prop.text)
+  },
+
+  /**
+  * bool值勾选的checkbox 组件
+  * @param {Object} prop  组件配置项
+  */
+   color(prop,change) {
+    return h(resolveComponent('el-color-picker'), {
+      modelValue:  prop.value,
+      showAlpha: true,
+      onChange(val) {
+        change(val, prop);
+      },
+    })
+  }
+}
+
+const Editors = { editors: [], register() { } }
+
+// 按钮
+Editors.register("button", (prop, changeFn) => {
   return {
-    view: "el-radio-group",
+    view: "button",
     props: {
-      value: prop.value,
       size: "small",
+      icon: prop.icon,
+      type: prop.btnType,
+      style: prop.style,
     },
     on: {
-      input: (value) => {
-        changeFn(value, prop);
+      click: (e) => {
+        prop.onClick && prop.onClick(e, changeFn);
       },
     },
-    children,
+    children:()=> prop.text,
   };
 });
 
@@ -129,22 +222,6 @@ Editors.register("bool", (prop, changeFn) => {
   };
 });
 
-// 滑块
-Editors.register("slider", (prop, changeFn) => {
-  return {
-    view: "el-slider",
-    props: {
-      value: prop.value,
-      max: prop.max,
-      min: prop.min,
-      marks: prop.marks,
-      range: prop.range,
-      onInput(value) {
-        changeFn(value, prop );
-      },
-    },
-  };
-});
 
 // 数字编辑
 Editors.register("number", (prop, changeFn) => {
@@ -221,20 +298,7 @@ Editors.register("model", (prop, changeFn) => {
 });
 
 // 颜色选择器
-Editors.register("color", (prop, changeFn) => {
-  return {
-    view: "el-color-picker",
-    props: {
-      value: prop.value,
-      "show-alpha": true,
-    },
-    on: {
-      input: (value) => {
-        changeFn(value, prop);
-      },
-    },
-  };
-});
+
 const componentMethods = {
   table: [
     { value: "selection", label: "获取选中行数据", type: "prop" },
@@ -346,24 +410,6 @@ Editors.register("method", (prop, changeFn) => {
   };
 });
 
-// 按钮
-Editors.register("button", (prop, changeFn) => {
-  return {
-    view: "button",
-    props: {
-      size: "small",
-      icon: prop.icon,
-      type: prop.btnType,
-      style: prop.style,
-    },
-    on: {
-      click: (e) => {
-        prop.onClick && prop.onClick(e, changeFn);
-      },
-    },
-    children: prop.buttonText || "设置",
-  };
-});
 
 // 页面选择编辑器
 Editors.register("page", (prop, changeFn) => {
@@ -531,4 +577,3 @@ Editors.register("action-select", (prop, changeFn) => {
     },
   };
 });
-export default Editors;

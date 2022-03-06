@@ -5,11 +5,7 @@ const viewMap = {
   select: $pre + "select",
   button: "ElButton",
 };
-function isSlot(obj) {
-  if (obj && Object.keys(obj)) {
-  }
-  return false;
-}
+
 const getNodes = (meta, context, beforeRender) => {
   if (isVNode(meta)) {
     return meta;

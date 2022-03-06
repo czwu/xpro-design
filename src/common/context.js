@@ -29,8 +29,11 @@ const context = {
     conf.uid = this.uuid(compName)
     Object.assign(conf,{
       selected: false,
-      span: conf.autoWidth ? 0 : conf.span || 24
+      span: conf.autoWidth ? 0 : conf.span || 24,
     })
+    if(!conf.props.class){
+      conf.props.class = []
+    }
     return conf
   },
   // 当前设计面板选中的组件

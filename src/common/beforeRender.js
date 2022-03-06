@@ -15,8 +15,11 @@ export default function beforeRender(renderMeta = {}, h) {
     const props = renderMeta.props = Object.assign({
         class: renderMeta.class || [],
     }, renderMeta.props)
-    if(renderMeta.selected){
+    if (renderMeta.selected) {
         renderMeta.props.class.push('design-selected')
+    }
+    if (renderMeta.view === 'layout' && renderMeta.span) {
+        renderMeta.props.class.push(`span-${renderMeta.span}`)
     }
     if (props.columns) {
         props.columns = XEUtils.clone(props.columns, true)
@@ -35,11 +38,13 @@ export default function beforeRender(renderMeta = {}, h) {
             renderMeta.props[renderMeta.design.bindDataAttr] = context.components[renderMeta.view].getMockData(renderMeta)
         }
     }
-
-    // 设计面板模式下 给设计时的组件配置拖拽
-    props.onVnodeMounted = function(vnode){
-        dragger.initDrag(vnode.el, vnode.component)
+    if (['layout'].includes(renderMeta.view)) {
+        // 设计面板模式下 给设计时的组件配置拖拽
+        props.onVnodeMounted = function (vnode) {
+            dragger.initDrag(vnode.el, vnode.component)
+        }
     }
+
     if (renderMeta.mapping) {
         renderMeta.mapping = renderMeta.mapping
         renderMeta.ondblclick = (e) => {

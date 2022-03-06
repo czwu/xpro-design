@@ -1,7 +1,7 @@
 <template>
   <div class="flex-row flex-grow" :class="{ dragging: dragging }">
     <materials></materials>
-    <div class="flex-col flex-grow">
+    <div class="flex-col flex-grow" style="width:1px">
       <div class="headbar flex-row">
         <div class="space" style="width: 10px;" />
         <div class="space flex-grow" style="line-height: 30px;">
@@ -111,7 +111,7 @@ export default defineComponent({
   overflow-y: hidden;
 }
 .properties {
-  width: 320px;
+  width: 340px;
   border-left: 1px solid #ddd;
   flex-shrink: 0;
 }

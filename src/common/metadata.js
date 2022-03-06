@@ -22,12 +22,10 @@ class Metadata {
       isComponent,
       isRoot: true,
       props: {
-        span: 24,
         style: {
           height: 'auto',
           width: '100%'
         },
-
       },
       children: [],
       events: {

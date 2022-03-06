@@ -5,9 +5,12 @@ context.components.button = {
   // 组件默认配置
   getConfig(parent, ctx) {
     return {
-      name: 'button',
-      props: {},
+      uid:'',
+      view: 'button',
       span:0,
+      props: {
+
+      },
       children:'按钮'
     }
   },
@@ -26,56 +29,71 @@ context.components.button = {
             value: '',
             clearable: true
           },
-          // {
-          //   label: '按钮类型',
-          //   mapping: 'props.type',
-          //   type: 'select',
-          //   options: ['default', 'primary', 'success', 'warning', 'danger', 'info', 'text'],
-          //   value: 'text',
-          //   help: '按钮类型'
-          // }, {
-          //   label: '按钮图标',
-          //   mapping: 'props.icon',
-          //   type: 'icon',
-          //   value: ''
-          // },
-          // Props.width({ help: '' }),
-          // Props.size(),
-          // ...Props.eventBtn()
+          {
+            label: '按钮类型',
+            mapping: 'props.type',
+            type: 'select',
+            options: ['default', 'primary', 'success', 'warning', 'danger', 'info', 'text'],
+            value: 'text',
+          },
+           {
+            label: '按钮图标',
+            mapping: 'props.icon',
+            type: 'icon',
+            value: ''
+          },
+          Props.width({ help: '' }),
+          Props.size(),
+           ...Props.eventBtn()
         ]
       },
-      // {
-      //   group: '高级配置',
-      //   groupType: 'collapse',
-      //   properties: [
-      //     Props.disabledExp(),
-      //     {
-      //       label: '圆角',
-      //       mapping: 'props.round',
-      //       type: 'bool',
-      //       value: false,
-      //       help: '是否圆角按钮'
-      //     },
-      //     {
-      //       label: '朴素按钮',
-      //       mapping: 'props.plain',
-      //       type: 'bool',
-      //       value: false,
-      //       help: '是否朴素按钮'
-      //     },
-      //     {
-      //       label: '字体颜色',
-      //       mapping: 'style.color',
-      //       type: 'color',
-      //       value: ''
-      //     },
-      //     Props.classList(),
-      //     Props.vif(),
-      //     ...Props.permission(),
-      //     ...Props.tooltip(),
-      //     ...Props.styles()
-      //   ]
-      // }
+      {
+        group: '高级配置',
+        groupType: 'collapse',
+        properties: [
+          Props.disabledExp(),
+          {
+            label: '圆角',
+            mapping: 'props.round',
+            type: 'bool',
+            value: false,
+            help: '是否为圆角按钮'
+          },
+          {
+            label: '朴素按钮',
+            mapping: 'props.plain',
+            type: 'bool',
+            value: false,
+            help: '是否为朴素按钮'
+          },
+          {
+            label: '圆形按钮',
+            mapping: 'props.circle',
+            type: 'bool',
+            value: false,
+            help: '是否为圆形按钮'
+          },
+          // {
+          //   label: '加载中',
+          //   mapping: 'props.loading',
+          //   type: 'bool',
+          //   value: false,
+          //   help: '是否为加载中状态'
+          // },
+          {
+            label: '字体颜色',
+            mapping: 'props.style.color',
+            type: 'color',
+            value: '',
+            help:'可自定义按钮文本颜色'
+          },
+          Props.class(),
+          Props.vif(),
+          ...Props.permission(),
+          ...Props.tooltip(),
+          ...Props.styles()
+        ]
+      }
     ]
   },
 

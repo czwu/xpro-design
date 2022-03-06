@@ -42,9 +42,9 @@ export default {
     },
     // 事件编排
     eventBtn() {
-      return [{ type: 'divider', label: '事件编排' }, {
+      return [{ type: 'divider', title: '事件编排' }, {
         label: '事件编排',
-        buttonText: '设置',
+        text: '设置',
         type: 'button',
         onClick(e) {
           const id = getComponentId(e.target)
@@ -59,6 +59,12 @@ export default {
         mapping: 'props.class',
         type: 'input',
         value: '',
+        format(val){
+          return val.join(',')
+        },
+        valueFormat(val){
+          return val.split(",")
+        },
         help: '添加自定义样式类名,多选请用逗号分割'
       }, prop)
     },
@@ -280,7 +286,7 @@ export default {
     height() {
       return {
         label: '高度',
-        mapping: 'style.height',
+        mapping: 'props.style.height',
         type: 'input',
         value: '',
         clearable: true,
@@ -295,7 +301,7 @@ export default {
         value: '',
         clearable: true,
         append: 'px',
-        format:(val)=>  val ? parseInt(val) : '',
+        format:(val)=>  (val ? parseInt(val) : '') ||'',
         valueFormat:(val)=>  val ? parseInt(val)+'px' : '',
         help: '像素宽度,该设置优先级高于栅格宽度,设置该项后 栅格宽度将不生效'
       }, param)
@@ -303,7 +309,7 @@ export default {
     flexibility() {
       return {
         label: '弹性',
-        mapping: 'style.flex-grow',
+        mapping: 'props.style.flex-grow',
         type: 'bool',
         value: false,
         format(val, isEdit) {
@@ -324,12 +330,12 @@ export default {
     layout() {
       return {
         label: '内部布局',
-        mapping: 'design.layout',
+        mapping: 'props.layout',
         type: 'radio',
         options: options({ col: '列', row: '行' }),
         value: 'col',
         onChange(val, meta) {
-          meta.style['flex-wrap'] = val === 'row' ? 'wrap' : ''
+          meta.props.style['flex-wrap'] = val === 'row' ? 'wrap' : ''
           return true
         },
         help: '组件内部布局方式,行:水平,从左至右排列, 列:垂直,子组件将从上而下排列'
@@ -348,7 +354,7 @@ export default {
             return val ? 'wrap' : ''
           }
         },
-        vif: (meta) => { return meta.design.layout === 'row' },
+        vif: (meta) => { return meta.props.layout === 'row' },
         help: '当子组件按列布局时, 是否允许子组件超出当前行宽度后换行'
       }
     },
@@ -375,33 +381,33 @@ export default {
     vif() {
       return {
         label: '渲染条件',
-        mapping: 'design.vif',
-        type: 'expression',
+        mapping: 'vif',
+        type: 'input',
         value: '',
         help: '设置条件表达式,表达式满足时,该组件才会渲染'
       }
     },
     vfor() {
-      return [{ type: 'divider', label: '循环指令配置' }, {
+      return [{ type: 'divider', title: '循环指令配置' }, {
         label: '循环渲染',
-        mapping: 'design.vfor',
+        mapping: 'vfor',
         type: 'bool',
-        value: '',
+        value: false,
         help: '是否需要循环渲染多次该组件'
       }, {
         label: '循环变量',
-        mapping: 'design.scope',
+        mapping: 'scope',
         type: 'model',
         filter: 'Array',
         value: '',
-        vif: 'design.vfor',
+        vif: 'vfor',
         help: '循环的数组对象'
       }, {
         label: '对象别名',
-        mapping: 'design.scope_alias',
+        mapping: 'scope_alias',
         type: 'input',
         value: 'item',
-        vif: 'design.vfor',
+        vif: 'vfor',
         help: '子组件可以使用该别名访问数组子对象'
       }]
     },
@@ -429,12 +435,12 @@ export default {
         mapping: 'props.size',
         type: 'radio',
         options: options({large:'较大',default: '默认', small: '较小', }),
-        value: 'small'
+        value: 'default'
       }
     },
     permission() {
       return [
-        { type: 'divider', label: '权限控制' },
+        { type: 'divider', title: '权限控制' },
         {
           label: '权限编码',
           mapping: 'permission',
@@ -446,45 +452,66 @@ export default {
     },
     tooltip() {
       return [
-        { type: 'divider', label: '提示' },
+        { type: 'divider', title: '提示' },
         {
           label: '提示',
-          mapping: 'design.tooltip',
+          mapping: 'tooltip',
           type: 'bool',
           value: false,
+          format(val){
+            return !!val
+          },
+          valueFormat(val){
+            return val ? {} : null
+          },
           help: '展示鼠标 hover 时的提示信息'
         },
         {
           label: '提示文本',
-          mapping: 'design.tipLabel',
+          mapping: 'tipText',
           type: 'i18n',
           value: '',
+          placeholder:'请设置提示文本',
           help: '具体展示的文本信息',
-          vif: 'design.tooltip'
+          vif: 'tooltip'
         },
         {
           label: '提示主题',
-          mapping: 'design.tipEffect',
+          mapping: 'tipEffect',
           type: 'radio',
           options: options({ dark: '黑', light: '白' }),
           value: 'dark',
           help: '提示颜色信息',
-          vif: 'design.tooltip'
+          vif: 'tooltip'
         },
         {
           label: '提示位置',
-          mapping: 'design.tipPlacement',
+          mapping: 'tipPlacement',
           type: 'select',
           value: 'top',
           help: 'Tooltip 的出现位置',
-          vif: 'design.tooltip'
+          vif: 'tooltip',
+          options: [
+            { value: 'top-start', label: '上左' },
+            { value: 'top', label: '上边' },
+            { value: 'top-end', label: '上右' },
+            { value: 'left-start', label: '左上' },
+            { value: 'left', label: '左边' },
+            { value: 'left-end', label: '左下' },
+            { value: 'right-start', label: '右上' },
+            { value: 'right', label: '右边' },
+            { value: 'right-end', label: '右下' },
+            { value: 'bottom-start', label: '下左' },
+            { value: 'bottom', label: '下边' },
+            { value: 'bottom-end', label: '下右' }
+          ]
         }
       ]
     },
     bgcolor() {
       return {
         label: '背景色',
-        mapping: 'style.background',
+        mapping: 'props.style.background',
         type: 'color',
         value: '',
         help: '背景颜色设置'
@@ -493,7 +520,7 @@ export default {
     margin() {
       return {
         label: '外边距',
-        mapping: 'style.margin',
+        mapping: 'props.style.margin',
         type: 'input',
         value: '',
         help: '请按照标准css margin属性配置,可以 5px 或 5px 5px 等方式配置 '
@@ -502,7 +529,7 @@ export default {
     padding() {
       return {
         label: '内边距',
-        mapping: 'style.padding',
+        mapping: 'props.style.padding',
         type: 'input',
         value: '',
         help: '请按照标准css padding属性配置,可以 5px 或 5px 5px 等方式配置 '
@@ -510,7 +537,7 @@ export default {
     },
     styles() {
       return [
-        { type: 'divider', label: '样式设置' },
+        { type: 'divider', title: '样式设置' },
         this.padding(),
         this.margin(),
         this.bgcolor()

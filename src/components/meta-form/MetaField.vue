@@ -1,19 +1,20 @@
 <template>
     <div class="meta-field flex-row">
-        <span v-if="prop.label" class="meta-field-label">
+        <span v-if="prop.label" class="meta-field-label" >
             {{ prop.label }}
             <el-tooltip
-                v-if="prop.help"
+                v-if="help"
                 class="item"
                 effect="dark"
-                :content="prop.help"
+                :content="help"
                 placement="top"
             >
-                <i class="el-icon-info" />
+             <el-icon style="vertical-align:middle;"><info-filled color='#de8d10' /></el-icon>
             </el-tooltip>
         </span>
+       
         <span class="meta-field-content flex-grow">
-            <component :is="config" /> 
+            <component :is="config" :key="key" />
             <!-- <x-render :meta="config"></x-render> -->
         </span>
     </div>
@@ -21,30 +22,34 @@
 
 
 <script>
-
+import { InfoFilled } from '@element-plus/icons-vue'
 import { defineComponent, ref, watch } from 'vue'
-import editor from './editor'
+import { uuid } from '../../utils/util'
+import Editor from './editor'
 export default defineComponent({
     props: {
         prop: Object
     },
+    components:{
+        InfoFilled
+    },
     setup(props, { emit }) {
         const config = ref(null)
+        const key = uuid(10)
         function refreshConfig() {
-            config.value = editor.getEditor(props.prop, (val, prop) => {
+            config.value = () => Editor.create(props.prop, (val, prop) => {
                 emit('change', val, prop)
             })
         }
         refreshConfig()
-        //属性配置更新后，修改组件
-        watch(props.prop,(newdata, olddata)=>{
-            if(newdata.type !== olddata.type ){
-                refreshConfig()
-            } else if(newdata.value!==olddata.value){
-                
-            }
-        })
+        // //属性配置更新后，修改组件
+        // watch(props.prop,(newdata, olddata)=>{
+        // //    refreshConfig()
+        // })
+
         return {
+            help:props.prop.help,
+            key,
             config
         }
     }
@@ -53,30 +58,33 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .meta-field {
-  line-height: 36px;
-  padding: 0 5px;
-  margin-top: 3px;
+    line-height: 36px;
+    padding: 0 5px;
+    margin-top: 3px;
 }
 .meta-field-label {
-  width: 90px;
-  font-size: 13px;
-  text-align: right;
-  flex-shrink: 0;
-  padding-right: 8px;
+    background-color: #f9f9f9;
+    width: 110px;
+    font-size: 14px;
+    text-align: right;
+    flex-shrink: 0;
+    padding-right: 8px;
+    
 }
 .meta-field-content {
-  font-size: 13px;
-  color: rgb(56, 56, 206);
+    padding:0 5px;
+    font-size: 14px;
+    color: rgb(56, 56, 206);
 }
 i.el-icon-info {
-  color: burlywood;
-  margin-left: 2px;
-  vertical-align: middle;
-  cursor: pointer;
+    color: burlywood;
+    margin-left: 2px;
+    vertical-align: middle;
+    cursor: pointer;
 }
 .meta-field-text {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 </style>

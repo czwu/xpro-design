@@ -130,9 +130,9 @@ export default defineComponent({
 }
 .child-editor {
   position: absolute;
-  right: 300px;
-  width: 300px;
-  max-height: 300px;
+  right: 340px;
+  width: 340px;
+  max-height: 340px;
   max-height: calc(100% - 70px);
   overflow-y: auto;
   top: 50px;
