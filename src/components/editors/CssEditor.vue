@@ -153,11 +153,11 @@ export default {
   color: #888a8e;
   border-left: 1px solid #121315 !important;
   background: #363636;
-  margin-right: 5px;
+  margin-right: 1px;
   user-select: none;
 }
 .editor-tabs .el-tabs__item.is-active {
-  background: #1e1e1e;
+  background: #626262;
   border-bottom-color: #1e1e1e !important;
   color: #fff;
 }
