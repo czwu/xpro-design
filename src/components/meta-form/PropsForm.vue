@@ -338,9 +338,7 @@ export default {
   font-size: 13px;
   cursor: pointer;
 }
-::v-deep .el-input-group__append {
-  padding:0 12px
-}
+
 </style>
 <style lang="scss">
 .props-form {

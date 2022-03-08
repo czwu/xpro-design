@@ -292,7 +292,7 @@ export default {
     }
   }
 }
-::v-deep .el-divider__text{
+:deep(.el-divider__text) {
     background-color: #f7f9fc;
 }
 </style>

@@ -36,9 +36,21 @@
           @click="full"
         />
       </div> -->
-      <div v-show="activeTab === 'html'" ref="htmlEditor" class="tab-editor flex-grow" />
-      <div v-show="activeTab === 'js'" ref="scriptEditor" class="tab-editor flex-grow" />
-      <div v-show="activeTab === 'css'" ref="cssEditor" class="tab-editor flex-grow"  />
+      <div
+        v-show="activeTab === 'html'"
+        ref="htmlEditor"
+        class="tab-editor flex-grow"
+      />
+      <div
+        v-show="activeTab === 'js'"
+        ref="scriptEditor"
+        class="tab-editor flex-grow"
+      />
+      <div
+        v-show="activeTab === 'css'"
+        ref="cssEditor"
+        class="tab-editor flex-grow"
+      />
     </div>
     <div v-show="!fullscreen" class="flex-col right-panel flex-grow">
       <div class="action-bar flex-row">
@@ -46,10 +58,15 @@
           <el-button
             plain
             :icon="showLeft ? 'p-icon-fullscreen' : 'p-icon-fullscreen-exit'"
-            @click="showLeft = !showLeft" size="large"
+            @click="showLeft = !showLeft"
+            size="large"
           />
 
-          <el-button icon="el-icon-refresh" type="primary" @click="runCode"  size="large"
+          <el-button
+            icon="el-icon-refresh"
+            type="primary"
+            @click="runCode"
+            size="large"
             >刷新</el-button
           >
 
@@ -57,7 +74,7 @@
             type="danger"
             icon="el-icon-circle-close"
             @click="$emit('update:visible', false)"
-             size="large"
+            size="large"
             >关闭</el-button
           >
         </el-button-group>
@@ -73,12 +90,12 @@ import loadMonaco from "@/utils/loadMonaco";
 const editorObj = {
   html: null,
   js: null,
-  css: null
+  css: null,
 };
 const mode = {
   html: "html",
   js: "javascript",
-  css: "css"
+  css: "css",
 };
 let monaco;
 
@@ -102,7 +119,11 @@ export default {
   },
   methods: {
     init() {
-      const compileData = {html:'<template></template>', js:'exprot default {}', css:''};
+      const compileData = {
+        html: "<template></template>",
+        js: "exprot default {}",
+        css: "",
+      };
       this.htmlCode = compileData.html;
       this.jsCode = compileData.js;
       this.cssCode = compileData.css;
@@ -145,9 +166,7 @@ export default {
         }
       });
     },
-    runCode() {
- 
-    },
+    runCode() {},
     generateCode() {
       const html = vueTemplate(editorObj.html.getValue());
       const script = vueScript(editorObj.js.getValue());
@@ -235,7 +254,7 @@ export default {
   font-size: 13px;
   padding: 3px 8px 0 0;
 }
-::v-deep .el-drawer__header {
+:deep(.el-drawer__header) {
   display: none;
 }
 .action-bar {
@@ -244,10 +263,4 @@ export default {
 }
 </style>
 
-<style lang="scss">
-
-
-
-
-
-</style>
+<style lang="scss"></style>
