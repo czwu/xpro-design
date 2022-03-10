@@ -79,33 +79,33 @@ export default {
     },
     fontSize() {
       return {
-        label: '字体大小',
+        label: '字体大小 (px)',
         mapping: 'props.style.fontSize',
         type: 'number',
         value: '',
-        format(val, isEdit) {
-          if (isEdit) {
-            return val ? parseInt(val) : ''
-          } else {
-            return val ? parseInt(val) + 'px' : ''
-          }
+        placeholder:'默认',
+        format(val) {
+          return val ? parseInt(val) : undefined
+        },
+        valueFormat(val){
+          return val ? val+'px' : ''
         }
       }
     },
     lineHeight() {
       return {
-        label: '行高',
-        mapping: 'style.lineHeight',
+        label: '行高 (px)',
+        mapping: 'props.style.lineHeight',
+        placeholder:'默认',
         type: 'number',
         value: '',
         clearable: true,
         append: 'px',
-        format(val, isEdit) {
-          if (isEdit) {
-            return val ? parseInt(val) : ''
-          } else {
-            return val ? parseInt(val) + 'px' : ''
-          }
+        format(val) {
+          return val ? parseInt(val) : undefined
+        },
+        valueFormat(val){
+          return val ? (val+'px') : ''
         }
       }
     },
@@ -269,8 +269,8 @@ export default {
         vif(meta) { return meta.design.dataType !== 'static' }
       }, data)
     },
-    span() {
-      return {
+    span(param) {
+      return Object.assign({
         label: '宽度',
         mapping: 'span',
         type: 'slider',
@@ -281,7 +281,7 @@ export default {
           12: ''
         },
         help: '栅格宽度,将按24等分设置布局宽度,该项优先级低于像素宽度'
-      }
+      },param)
     },
     height() {
       return {

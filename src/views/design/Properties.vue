@@ -57,7 +57,7 @@ export default defineComponent({
 
     onMounted(() => {
       emitter.on(EVENTS.COMPONENT_SELECTED, (compMeta) => {
-        const view = compMeta._view_ || compMeta.view;
+        const view = compMeta._view_ || compMeta.name;
         if (!compMeta.isRoot) {
           // 关闭子属性编辑器
           if (childFormVisible.value) {
@@ -90,7 +90,7 @@ export default defineComponent({
   mounted() {
     emitter.on(EVENTS.MEATA_SELECTED, (meta, parent) => {
       this.childFormVisible.value = false;
-      const name = meta._view_ || meta.view;
+      const name = meta._name_ || meta.name;
       this.pagePropsVisible.value = false;
       this.properties.value = context.components[name].getProperties(meta);
       this.addPropId(this.properties.value);
@@ -101,7 +101,7 @@ export default defineComponent({
       this.activeTab.value = "models";
     });
     emitter.on(EVENTS.SHOW_CHILD_PROP, (meta) => {
-      const view = meta._view_ || meta.view;
+      const view = meta._name_ || meta.name;
       this.childProperties.value = context.components[view].getProperties(meta);
       this.addPropId(this.childProperties.value);
       this.childMeta.value = meta;

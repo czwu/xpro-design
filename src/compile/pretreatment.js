@@ -1,6 +1,6 @@
 import { useI18n } from "vue-i18n";
 import { treeEach } from './util'
-import componentsPretreatment from '../comps/index'
+// import componentsPretreatment from '../components/index'
 
 /**
   * 元数据预处理函数,将元数据对象解析成vue render可识别的属性
@@ -16,7 +16,7 @@ export default function pretreatment(meta, ctx, type = 'runtime') {
   meta.props.class = meta.props.class || []
   // 如果配置了span属性,则将span 解析成 样式 [span-1] 的类名,添加到class中
   if (meta.span) {
-    meta.props.class.push(`span-${meta.design.span}`)
+    meta.props.class.push(`span-${meta.span}`)
   }
   if (meta.uid) {
     meta.props.class.push(meta.uid)
@@ -45,35 +45,13 @@ export default function pretreatment(meta, ctx, type = 'runtime') {
   }
 
   // 处理选项数据信息
-  optionsConvert(meta, ctx)
-  // 判断是否是运行时编译,如果是,执行运行时comple的独有解析逻辑
-  if (type === 'runtime') {
-    runtime(meta, ctx)
-  } else {
-    // 如果有其他插槽元素,则将插槽放入children
-    if (meta.slots && meta.slots.length) {
-      meta.children = meta.children || []
-      if (Array.isArray(meta.children)) {
-        meta.children.push(...meta.slots)
-      } else {
-        meta.children = [meta.children, ...meta.slots]
-      }
-    }
-  }
+  // optionsConvert(meta, ctx)
   // 其他组件各自的代码编译预处理程序
-  componentsPretreatment(meta, ctx, type, pretreatment)
+  // componentsPretreatment(meta, ctx, type, pretreatment)
   // 处理国际化配置信息meta,'
-  i18nConvert(meta, ctx)
+  // i18nConvert(meta, ctx)
   // 布局处理 (flex栅格 与 标准栅格)
-  layoutConvert(meta, ctx, type)
-}
-/**
- * 运行时compile的独有解析逻辑
- * @param {*} meta 组件配置对象
- * @param {*} ctx  解析上下文对象
- */
-function runtime(meta, ctx) {
-  // 代码已移植到comps/组件名
+  // layoutConvert(meta, ctx, type)
 }
 
 /**

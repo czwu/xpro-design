@@ -99,7 +99,7 @@ export default {
                     const toUuid = getComponentId(evt.to)
                     const parent = Metadata.getComponentById(toUuid)
                     // 根据不通的布局 模式,需要做处理
-                    if (parent.design && parent.design.mode === 'span') {
+                    if (parent.design && parent.mode === 'span') {
                         // 标准栅格模式, 元数需要包装col
                         parent.children.splice(getRealIndex(evt.to, evt.newIndex), 0, meta.name === 'col' ? meta : wrapCol(meta))
                     } else {
@@ -110,9 +110,7 @@ export default {
                     const toid = getComponentId(evt.to)
                     const parent = Metadata.getComponentById(toid)
                     let meta
-                    if (parent.name === 'upload-img') {
-                        return
-                    }
+        
                     if (['pie', 'line', 'bar', 'complex'].includes(name)) {
                         meta = context.getConfig('chart', { type: name })
                     } else {
@@ -123,7 +121,7 @@ export default {
                         meta.label = evt.item.getAttribute('label')
                         meta.code = evt.item.getAttribute('code')
                     }
-                    if (parent.design && parent.design.mode === 'span') {
+                    if (parent.design && parent.mode === 'span') {
                         // 包装col
                         parent.children.splice(getRealIndex(evt.to, evt.newIndex), 0, wrapCol(meta))
                     } else {
@@ -186,10 +184,10 @@ function getRealIndex(parent, index) {
 
 function wrapCol(meta) {
     let warpSpan = 6
-    if (meta.design && meta.design.span) {
-        warpSpan = meta.design.span
-        meta.design._span = warpSpan
-        meta.design.span = warpSpan ? 24 : 0
+    if (meta.span) {
+        warpSpan = meta.span
+        meta._span = warpSpan
+        meta.span = warpSpan ? 24 : 0
     }
     return {
         uuid: context.uuid('col'),

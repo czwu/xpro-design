@@ -1,6 +1,6 @@
 import context from '@/common/context'
 import metadata from '../common/metadata'
-// import pretreatment from '@/compile/common/pretreatment'
+import pretreatment from '@/compile/pretreatment'
 import { emitter, EVENTS } from '@/common/bus'
 import { getComponentId2 } from '@/utils/util'
 import dragger from '@/common/dragger'
@@ -8,7 +8,7 @@ import Vue from 'vue'
 import XEUtils from "xe-utils";
 export default function beforeRender(renderMeta = {}, h) {
     const tags = ['div', 'i', 'template']
-    if (tags.includes(renderMeta.view)) {
+    if (tags.includes(renderMeta.name)) {
         return
     }
     // 处理 设计模式 组件选中状态, 添加selected 样式
@@ -18,9 +18,8 @@ export default function beforeRender(renderMeta = {}, h) {
     if (renderMeta.selected) {
         renderMeta.props.class.push('design-selected')
     }
-    if (renderMeta.view === 'layout' && renderMeta.span) {
-        renderMeta.props.class.push(`span-${renderMeta.span}`)
-    }
+    pretreatment(renderMeta, {},  'design')
+    
     if (props.columns) {
         props.columns = XEUtils.clone(props.columns, true)
     }
@@ -34,11 +33,11 @@ export default function beforeRender(renderMeta = {}, h) {
     }
     // 处理设计时的模拟数据
     if (renderMeta.bindDataAttr) {
-        if (context.components[renderMeta.view] && context.components[renderMeta.view].getMockData) {
-            renderMeta.props[renderMeta.design.bindDataAttr] = context.components[renderMeta.view].getMockData(renderMeta)
+        if (context.components[renderMeta.name] && context.components[renderMeta.name].getMockData) {
+            renderMeta.props[renderMeta.design.bindDataAttr] = context.components[renderMeta.name].getMockData(renderMeta)
         }
     }
-    if (['layout'].includes(renderMeta.view)) {
+    if (['layout'].includes(renderMeta.name)) {
         // 设计面板模式下 给设计时的组件配置拖拽
         props.onVnodeMounted = function (vnode) {
             dragger.initDrag(vnode.el, vnode.component)
@@ -89,7 +88,7 @@ export default function beforeRender(renderMeta = {}, h) {
     }
 
     // 处理 模型或其他元素拖拽到设计器中
-    if (renderMeta.view === 'layout' || renderMeta.view === 'form') {
+    if (renderMeta.name === 'layout' || renderMeta.name === 'form') {
         renderMeta.onDragover = function (ev) {
             ev.preventDefault()
         }
@@ -113,8 +112,8 @@ export default function beforeRender(renderMeta = {}, h) {
         // }
     }
 
-    if (renderMeta.view) {
-        const component = context.components[renderMeta.view]
+    if (renderMeta.name) {
+        const component = context.components[renderMeta.name]
         if (component && component.beforeRender) {
             component.beforeRender(renderMeta)
         }

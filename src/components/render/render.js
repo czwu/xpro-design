@@ -1,11 +1,11 @@
 import { h, isVNode, resolveComponent } from "vue";
 import XEUtils from "xe-utils";
-const $pre = "el-";
 const viewMap = {
-  select: $pre + "select",
+  select: "ElSelect",
   button: "ElButton",
+  text: "span",
+  input:"ElInput",
 };
-
 const getNodes = (meta, context, beforeRender) => {
   if (isVNode(meta)) {
     return meta;
@@ -29,22 +29,25 @@ const getNodes = (meta, context, beforeRender) => {
     if (meta.slots) {
       const children = {};
       Object.keys(meta.slots).forEach((key) => {
-        const slotNode = getNodes(meta.slots[key]);
+        const slotNode = getNodes(meta.slots[key], context, beforeRender);
         children[key] = () => slotNode;
       });
       if (childNodes) {
         children.default = () => childNodes;
       }
+
       return h(
-        resolveComponent(meta.tag || viewMap[meta.view] || meta.view),
+        resolveComponent(meta.tag || viewMap[meta.name] || meta.name),
         props,
         children
       );
     }
+
+    const children = meta.tag ? childNodes : () => childNodes;
     return h(
-      resolveComponent(meta.tag || viewMap[meta.view] || meta.view),
+      meta.tag || resolveComponent(viewMap[meta.name] || meta.name),
       props,
-      () => childNodes
+      children
     );
   } else if (typeof meta === "string") {
     return meta;

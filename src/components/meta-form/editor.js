@@ -20,7 +20,12 @@ export default {
    * @param {Function} fn
    */
   register(name, fn) {
-    this.editors[name] = fn;
+    if(!name || ['register','get','create'].includes(name)){
+      console.error('无效的编辑器名称！')
+    }else{
+      this[name] = fn;
+    }
+
   },
 
   /**
@@ -219,6 +224,7 @@ export default {
       modelValue: prop.format ? prop.format(prop.value) : prop.value,
       step: prop.step,
       stepStrictly: prop.stepStrictly,
+      placeholder:prop.placeholder,
       max: prop.max,
       min: prop.min,
       onChange(val) {

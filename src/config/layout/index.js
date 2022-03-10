@@ -2,14 +2,13 @@ import context from "@/common/context";
 import { options, treeEach } from "@/utils/util";
 import Props from "../props";
 import { emitter, EVENTS } from "@/common/bus";
-context.components.layout = {
+context.registerComponent('layout',{
   // 组件默认配置
   getConfig() {
     return {
       uid: "",
-      view: "layout",
+      name: "layout",
       span:24,
-     
       props: {
         layout: "row",
         style: {
@@ -191,31 +190,31 @@ context.components.layout = {
       },
     ];
   },
-};
+});
 
-context.components.col = {
-  // 组件的属性配置
-  getProperties() {
-    return [
-      {
-        group: "常用配置",
-        groupType: "collapse",
-        properties: [
-          Props.compId(),
-          {
-            label: "宽度",
-            mapping: "props.span",
-            type: "slider",
-            value: 24,
-            max: 24,
-            min: 1,
-            marks: {
-              12: "",
-            },
-            help: "栅格宽度,将按24等分设置布局宽度",
-          },
-        ],
-      },
-    ];
-  },
-};
+// context.components.col = {
+//   // 组件的属性配置
+//   getProperties() {
+//     return [
+//       {
+//         group: "常用配置",
+//         groupType: "collapse",
+//         properties: [
+//           Props.compId(),
+//           {
+//             label: "宽度",
+//             mapping: "props.span",
+//             type: "slider",
+//             value: 24,
+//             max: 24,
+//             min: 1,
+//             marks: {
+//               12: "",
+//             },
+//             help: "栅格宽度,将按24等分设置布局宽度",
+//           },
+//         ],
+//       },
+//     ];
+//   },
+// };

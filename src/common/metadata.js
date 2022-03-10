@@ -18,7 +18,7 @@ class Metadata {
     const isComponent = getUrlParams('type') === 'component'
     const emptyMeta = {
       uid: this.meta?.uid || (isComponent ? 'comp-' : 'page-') + uuid(8),
-      view: 'layout',
+      name: 'layout',
       isComponent,
       isRoot: true,
       props: {
@@ -177,6 +177,9 @@ class Metadata {
       }
       if (Array.isArray(child.slots)) {
         this.compEach(child.slots, fn)
+      }
+      if(typeof child.slots === 'object'){
+        this.compEach(Object.values(child.slots), fn)
       }
       if (Array.isArray(child.columns)) {
         if (child.name === 'grid') {

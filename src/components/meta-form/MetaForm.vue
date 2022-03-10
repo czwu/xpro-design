@@ -42,6 +42,9 @@ export default defineComponent({
       if (prop) {
         prop.value = value;
         set(meta.value, prop.mapping, value);
+        if(prop.onChange){
+          prop.onChange(value, meta.value)
+        }
       }
     }
     function check(field) {
