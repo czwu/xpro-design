@@ -2,7 +2,7 @@ import context from "@/common/context";
 import Props from "../props";
 context.registerComponent("button", {
   // 组件默认配置
-  getConfig(parent, ctx) {
+  getConfig() {
     return {
       uid: "",
       name: "button",

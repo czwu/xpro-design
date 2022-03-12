@@ -5,6 +5,7 @@ const viewMap = {
   button: "ElButton",
   text: "span",
   input:"ElInput",
+  select:'ElSelect'
 };
 const getNodes = (meta, context, beforeRender) => {
   if (isVNode(meta)) {

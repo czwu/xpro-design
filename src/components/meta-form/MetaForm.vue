@@ -5,7 +5,7 @@
         <el-collapse :key="prop.group" v-model="activeName" :accordion="true">
           <el-collapse-item :title="prop.group" :name="prop.group">
             <div class="meta-form-group" :class="meta.class">
-              <template class v-for="(item, index) in prop.properties" :key="item._key">
+              <template class v-for="item in prop.properties" :key="item._key">
                 <meta-field v-if="check(item)" :prop="item" @change="onFieldChange"></meta-field>
               </template>
             </div>

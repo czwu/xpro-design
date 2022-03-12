@@ -43,7 +43,8 @@
     custom-class="my-drawer"
   >
     <json-editor
-      v-model="pageMeta"
+      :json="pageMeta"
+      @change="metaChange"
       v-if="metaVisible"
       v-model:visible="metaVisible"
     ></json-editor>
@@ -91,6 +92,9 @@ export default defineComponent({
     function clear() {
       PageMeta.reset()
     }
+    function metaChange(meta){
+      Object.assign(PageMeta.meta, meta)
+    }
     function save(){
       
     }
@@ -99,6 +103,7 @@ export default defineComponent({
       metaVisible,
       cssVisible,
       previewVisible,
+      metaChange,
       clear,
       save
     };

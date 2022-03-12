@@ -1,4 +1,5 @@
 import { getComponentId, options, uuid } from '@/utils/util'
+import PageMeta from '@/common/metadata'
 import { emitter, EVENTS } from '@/common/bus'
 export default {
     // 组件ID, 只读
@@ -150,11 +151,11 @@ export default {
     dataType(prop = {}) {
       return Object.assign({
         label: '数据绑定',
-        mapping: 'dataType',
+        mapping: 'dataSourceType',
         type: 'radio',
         options: options({ static: '静态', dynamic: '动态', api: '服务' }),
         value: 'static',
-        help: '请提供绑定数据的来源类型'
+        help: '请选择数据源的类型'
       }, prop)
     },
     staticData() {
@@ -181,70 +182,67 @@ export default {
             width: '80px'
           }
         ],
-        vif(meta) { return meta.design.dataType === 'static' }
+        vif: meta => meta.dataSourceType === 'static'
       }
     },
     dynamicData(props) {
       return Object.assign({
         label: '模型数据',
-        mapping: 'design.dynamicOptions',
+        mapping: 'dataSource',
         type: 'model',
         checkStrictly: true,
         help: '请选择数据模型',
         value: '',
-        vif(meta) { return meta.design.dataType === 'dynamic' }
+        vif: meta => meta.dataSourceType === 'dynamic'
       }, props)
     },
     api(prop) {
-      const apis = window.getMetaManager().meta.apis || []
+      const apis = PageMeta.meta.apis || []
       return Object.assign({
         label: '选择服务',
-        mapping: 'design.initApi.apiUcode',
+        mapping: 'api',
         type: 'select',
         options: apis,
         labelKey: 'name',
-        valueKey: 'apiUcode',
+        valueKey: 'code',
         help: '请选择服务',
         value: ''
       }, prop)
     },
-    initApi(meta) {
-      const apis = window.getMetaManager().meta.apis || []
+    initApi() {
+      const apis = PageMeta.meta.apis || []
       return [
         {
           label: '选择服务',
-          mapping: 'design.initApi.apiUcode',
+          mapping: 'api.code',
           type: 'select',
           options: apis,
           labelKey: 'name',
           valueKey: 'apiUcode',
           help: '请选择服务',
           value: '',
-          vif(meta) { return meta.design.dataType === 'api' }
+          vif: meta => meta.dataSourceType === 'api'
         }, {
           label: '参数设置',
           type: 'button',
-          buttonText: '设置',
+          text: '设置',
           onClick(e) {
-            const apiUcode = meta.design.initApi.apiUcode || ''
-            const params = meta.design.initApi.params || []
-            emitter.emit(EVENTS.SHOW_PARAMS_EDITOR, {
-              params: params,
-              uuid: meta.uuid,
-              apiUcode: apiUcode,
-              callback(params) {
-                meta.design.initApi.params = params
-              }
-            })
+            // emitter.emit(EVENTS.SHOW_PARAMS_EDITOR, {
+            //   uid: meta.uid,
+            //   api: meta.api,
+            //   callback(params) {
+            //     meta.api.params = params
+            //   }
+            // })
           },
-          vif(meta) { return meta.design.initApi?.apiUcode }
+          vif: meta => meta.api?.code
         }, {
           label: '数据加工',
-          mapping: 'design.initApi.resultTransform',
+          mapping: 'api.dataHandler',
           type: 'method',
           onlyCode: true,
           value: '',
-          vif(meta) { return meta.design.initApi?.apiUcode },
+          vif: meta => meta.api?.code,
           help: '如需要对服务返回的数据做加工处理,可选择自定义方法,并在方法内返回修正好的数据'
         }
       ]
@@ -252,21 +250,21 @@ export default {
     valueKey(data = {}, meta) {
       return Object.assign({
         label: '值字段',
-        mapping: 'design.valueKey',
+        mapping: 'valueKey',
         type: 'field-select',
         params: meta,
         value: '',
-        vif(meta) { return meta.design.dataType !== 'static' }
+        vif: meta => meta.dataSourceType !== 'static'
       }, data)
     },
     labelKey(data = {}, meta) {
       return Object.assign({
         label: '描述字段',
-        mapping: 'design.labelKey',
+        mapping: 'labelKey',
         params: meta,
         type: 'field-select',
         value: '',
-        vif(meta) { return meta.design.dataType !== 'static' }
+        vif: meta => meta.dataSourceType !== 'static'
       }, data)
     },
     span(param) {
@@ -321,7 +319,7 @@ export default {
     disabledExp() {
       return {
         label: '禁用条件',
-        mapping: 'design.disabled',
+        mapping: 'disabled',
         type: 'input',
         value: '',
         help: '禁用条件表达式'
@@ -372,7 +370,7 @@ export default {
     scroll() {
       return {
         label: '滚动条',
-        mapping: 'design.scroll',
+        mapping: 'scroll',
         type: 'select',
         options: [{ value: '', label: '无' }, { value: 'x', label: '允许横向滚动' }, { value: 'y', label: '允许垂直滚动' }],
         value: ''
@@ -414,7 +412,7 @@ export default {
     disabled() {
       return {
         label: '禁用条件',
-        mapping: 'design.disabled',
+        mapping: 'disabled',
         type: 'input',
         value: '',
         help: '禁用条件表达式'
@@ -434,8 +432,8 @@ export default {
         label: '组件尺寸',
         mapping: 'props.size',
         type: 'radio',
-        options: options({large:'较大',default: '默认', small: '较小', }),
-        value: 'default'
+        options: options({large:'较大','': '默认', small: '较小', }),
+        value: ''
       }
     },
     permission() {
@@ -541,25 +539,11 @@ export default {
         this.padding(),
         this.margin(),
         this.bgcolor()
-        // {
-        //   label: '字体大小',
-        //   mapping: 'design.cls.font-size',
-        //   type: 'number',
-        //   value: '',
-        //   format(val, isEdit) {
-        //     if (isEdit) {
-        //       return val ? parseInt(val) : ''
-        //     } else {
-        //       return val ? parseInt(val) + 'px' : ''
-        //     }
-        //   }
-        // },
-        // {
-        //   label: '字体颜色',
-        //   mapping: 'design.cls.color',
-        //   type: 'color',
-        //   value: ''
-        // }
       ]
     }
+}
+
+
+function getCurrMeta(e){
+
 }

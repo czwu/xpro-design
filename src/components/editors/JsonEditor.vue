@@ -31,7 +31,7 @@ export default {
   name: "JsonEditor",
   components: {},
   props: {
-    modelValue: {
+    json: {
       type: Object,
       required: true,
     },
@@ -40,7 +40,7 @@ export default {
       default: false,
     },
   },
-  emits: ["update:modelValue", "update:visible"],
+  emits: ["change", "update:visible"],
   data() {
     return {
       beautifierJson: null,
@@ -77,7 +77,7 @@ export default {
       }
     },
     loadMonacoEditor() {
-      const str = JSON.stringify(this.modelValue).replace(
+      const str = JSON.stringify(this.json).replace(
         /"selected":true,/g,
         ""
       );
@@ -120,7 +120,7 @@ export default {
     },
     refresh() {
       try {
-        this.$emit("update:modelValue", JSON.parse(this.editor.getValue()));
+        this.$emit("change", JSON.parse(this.editor.getValue()));
       } catch (error) {
         this.$notify({
           title: "错误",

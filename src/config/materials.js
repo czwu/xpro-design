@@ -53,17 +53,9 @@
           label: '下拉选择器'
         },
         {
-          name: 'radio',
-          label: '单选'
-        },
-        {
           name: 'radio-group',
           icon: 'radio',
           label: '单选框组'
-        },
-        {
-          name: 'checkbox',
-          label: '多选框'
         },
         {
           name: 'checkbox-group',
