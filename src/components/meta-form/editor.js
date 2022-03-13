@@ -20,9 +20,9 @@ export default {
    * @param {Function} fn
    */
   register(name, fn) {
-    if(!name || ['register','get','create'].includes(name)){
+    if (!name || ['register', 'get', 'create'].includes(name)) {
       console.error('无效的编辑器名称！')
-    }else{
+    } else {
       this[name] = fn;
     }
 
@@ -94,9 +94,9 @@ export default {
         type(option) !== "object"
           ? { label: option, value: option }
           : {
-              label: option[prop.labelKey || "label"],
-              value: option[prop.valueKey || "value"],
-            };
+            label: option[prop.labelKey || "label"],
+            value: option[prop.valueKey || "value"],
+          };
       return h(resolveComponent("el-option"), props);
     });
     return h(
@@ -147,9 +147,9 @@ export default {
         type(option) !== "object"
           ? { label: option, value: option }
           : {
-              label: option[prop.labelKey || "label"],
-              value: option[prop.valueKey || "value"],
-            };
+            label: option[prop.labelKey || "label"],
+            value: option[prop.valueKey || "value"],
+          };
       return h(
         resolveComponent("el-radio-button"),
         { label: props.value },
@@ -195,7 +195,7 @@ export default {
         icon: prop.icon ? resolveComponent(prop.icon) : "",
         type: prop.btnType,
         style: prop.style,
-        onClick: () => prop.onClick(change),
+        onClick: () => prop.onClick(),
       },
       () => prop.text
     );
@@ -224,7 +224,7 @@ export default {
       modelValue: prop.format ? prop.format(prop.value) : prop.value,
       step: prop.step,
       stepStrictly: prop.stepStrictly,
-      placeholder:prop.placeholder,
+      placeholder: prop.placeholder,
       max: prop.max,
       min: prop.min,
       onChange(val) {
@@ -233,9 +233,46 @@ export default {
       },
     });
   },
+
+  /**
+   * 数字编辑器
+   * @param {Object} prop  组件配置项
+   */
+   i18n(prop, change) {
+    const conf = {
+      modelValue: prop.format ? prop.format(prop.value) : prop.value,
+      clearable: prop.clearable,
+      placeholder: prop.placeholder,
+      onInput(val) {
+        let value = prop.valueFormat ? prop.valueFormat(val) : val;
+        change(value, prop);
+      },
+    };
+    return h(resolveComponent("el-input"), conf);
+  },
+
+  /**
+ * 列表编辑器
+ * @param {Object} prop  组件配置项
+ */
+  list(prop, change) {
+    return h(resolveComponent("list-editor"), {
+      data:prop.value,
+      columns:prop.columns,
+      addable:prop.addable,
+      deleteable:prop.deleteable,
+      sortable:prop.sortable,
+      addButtonLabel:prop.addButtonLabel,
+      dataTemplate:prop.dataTemplate,
+      beforeDelete:prop.beforeDelete,
+      onChange(val) {
+        change(val, prop);
+      }
+    });
+  }
 };
 
-const Editors = { editors: [], register() {} };
+const Editors = { editors: [], register() { } };
 
 // 图标选择编辑器
 Editors.register("icon", (prop, changeFn) => {
@@ -253,20 +290,7 @@ Editors.register("icon", (prop, changeFn) => {
   };
 });
 // 国际化选择编辑器
-Editors.register("i18n", (prop, changeFn) => {
-  return {
-    view: "i18n-select",
-    props: {
-      value: prop.value,
-    },
-    style: prop.style,
-    on: {
-      input: (value) => {
-        changeFn(value, prop);
-      },
-    },
-  };
-});
+Editors.register("i18n", Editors.input);
 
 // 模型选择编辑器
 Editors.register("model", (prop, changeFn) => {

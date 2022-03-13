@@ -34,7 +34,7 @@ export default defineComponent({
     properties: Array,
     meta: Object,
   },
-  setup(props, { emit }) {
+  setup(props) {
     const { properties, meta } = toRefs(props);
 
     const activeName = ref(properties.value[0]?.group || "");
@@ -42,7 +42,7 @@ export default defineComponent({
       if (prop) {
         prop.value = value;
         set(meta.value, prop.mapping, value);
-        if(prop.onChange){
+        if (prop.onChange) {
           prop.onChange(value, meta.value)
         }
       }
@@ -56,7 +56,7 @@ export default defineComponent({
     watch(meta, (data) => {
       syncValue(properties.value, data)
     })
-    watch(properties,(data)=>{
+    watch(properties, () => {
       genPropsKey()
     })
 
@@ -64,6 +64,10 @@ export default defineComponent({
       properties.value.forEach(g => {
         g.properties.forEach(obj => {
           obj._key = obj._key || uuid(8)
+          if (obj.onClick && !obj._onClick) {
+            obj._onClick = obj.onClick
+            obj.onClick = (e) => obj._onClick(e, meta)
+          }
         })
       })
     }
@@ -76,11 +80,8 @@ export default defineComponent({
     };
   },
   components: {
-    MetaField,
-  },
-  methods: {
-
-  },
+    MetaField
+  }
 });
 </script>
 <style lang="scss">

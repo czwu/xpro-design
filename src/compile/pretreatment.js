@@ -111,15 +111,8 @@ function isStrVal(val) {
  * @param {Object} ctx  编译上下文
  */
 function optionsConvert(meta, ctx) {
-  // 静态数据转换处理
-  const tagMap = ({
-    'checkbox-group': meta.design.buttonStyle ? 'checkbox-button' : 'checkbox',
-    'radio-group': meta.design.buttonStyle ? 'radio-button' : 'radio',
-    'select': 'el-option'
-  })
-  const childTag = tagMap[meta.name]
-
-  if (meta.design.dataType === 'static' && meta.design.options) {
+  const childTag = meta.childTag
+  if (meta.dataSourceType === 'static' && meta.options) {
     const datatype = findFieldDataType(ctx, meta.design.vmodel)
     meta.children = meta.design.options.map(opt => {
       const val = datatype === 'Integer' ? opt.value * 1 : opt.value

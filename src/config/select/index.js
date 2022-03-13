@@ -6,7 +6,10 @@ context.registerComponent('select', {
     return {
       uid: '',
       name: 'select',
+      dataSourceType:'static',
+      childTag:'el-option',
       props: {
+       
       },
       children:[],
       slots:{},
@@ -23,15 +26,16 @@ context.registerComponent('select', {
           Props.model(),
           Props.placeholder(),
           Props.size(),
+          Props.width({ help: '' }),
           Props.multiple(),
           Props.clearable(),
           Props.dataType(),
-          Props.staticData(),
+          ...Props.staticData(),
           Props.dynamicData(),
           ...Props.initApi(),
           Props.valueKey(),
           Props.labelKey(),
-          Props.width({ help: '' }),
+
           ...Props.eventBtn()
         ]
       },

@@ -4,6 +4,7 @@ import MetaForm from './meta-form/MetaForm.vue'
 import Layout from './ui/layout/index'
 import JsonEditor from './editors/JsonEditor'
 import CssEditor from './editors/CssEditor'
+import ListEditor from './editors/ListEditor'
 
 export default {
   install: (app) => {
@@ -16,6 +17,7 @@ export default {
     // 元数据Json的格式化编辑器显示
     app.component(JsonEditor.name, JsonEditor)
     app.component(CssEditor.name, CssEditor)
+    app.component(ListEditor.name, ListEditor)
     //布局
     app.use(Layout)
   }

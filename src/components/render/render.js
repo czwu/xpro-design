@@ -5,7 +5,8 @@ const viewMap = {
   button: "ElButton",
   text: "span",
   input:"ElInput",
-  select:'ElSelect'
+  select:'ElSelect',
+  'radio-group':'el-radio-group'
 };
 const getNodes = (meta, context, beforeRender) => {
   if (isVNode(meta)) {

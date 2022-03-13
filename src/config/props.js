@@ -47,9 +47,8 @@ export default {
         label: '事件编排',
         text: '设置',
         type: 'button',
-        onClick(e) {
-          const id = getComponentId(e.target)
-          emitter.emit(EVENTS.SHOW_EVENT_SETUP, id)
+        onClick(e, meta) {
+          emitter.emit(EVENTS.SHOW_EVENT_SETUP, meta)
         }
       }]
     },
@@ -159,17 +158,20 @@ export default {
       }, prop)
     },
     staticData() {
-      return {
-        label: '静态数据录入',
-        type: '$list',
+      return [
+        { type: 'divider', title: '录入选项数据', vif: meta => meta.dataSourceType === 'static' },
+        {
+
+        type: 'list',
         mapping: 'options',
-        supportDel: true,
-        supportAdd: true,
+        deleteable: true,
+        addable: true,
+        sortable:true,
         value: [],
         columns: [
           {
             mapping: 'label',
-            type: 'i18n',
+            type: 'input',
             value: '',
             placeholder: '标签'
           },
@@ -184,6 +186,7 @@ export default {
         ],
         vif: meta => meta.dataSourceType === 'static'
       }
+      ]
     },
     dynamicData(props) {
       return Object.assign({
@@ -226,14 +229,14 @@ export default {
           label: '参数设置',
           type: 'button',
           text: '设置',
-          onClick(e) {
-            // emitter.emit(EVENTS.SHOW_PARAMS_EDITOR, {
-            //   uid: meta.uid,
-            //   api: meta.api,
-            //   callback(params) {
-            //     meta.api.params = params
-            //   }
-            // })
+          onClick(e, meta) {
+            emitter.emit(EVENTS.SHOW_PARAMS_EDITOR, {
+              uid: meta.uid,
+              api: meta.api,
+              callback(params) {
+                meta.api.params = params
+              }
+            })
           },
           vif: meta => meta.api?.code
         }, {
@@ -427,14 +430,14 @@ export default {
         help: '设置为只读'
       }
     },
-    size() {
-      return {
+    size(conf) {
+      return Object.assign({
         label: '组件尺寸',
         mapping: 'props.size',
         type: 'radio',
         options: options({large:'较大','': '默认', small: '较小', }),
         value: ''
-      }
+      },conf)
     },
     permission() {
       return [

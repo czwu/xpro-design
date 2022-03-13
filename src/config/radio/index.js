@@ -5,7 +5,7 @@ import Props from '../props'
 
 context.components['radio-group'] = {
   // 组件默认配置
-  getConfig(parent, ctx) {
+  getConfig() {
     return {
       uuid: '',
       name: 'radio-group',
@@ -29,51 +29,46 @@ context.components['radio-group'] = {
           Props.uid(),
           Props.model(),
           {
-            label: '按钮样式',
-            mapping: 'design.buttonStyle',
-            type: 'bool',
-            value: false,
-            help: '是否使用按钮样式'
-          },
-          {
-            label: '组件尺寸',
-            mapping: 'props.size',
+            label: '风格',
+            mapping: 'optionTag',
             type: 'radio',
-            options: options({ medium: '中等', small: '较小', mini: '迷你' }),
-            value: constants_SIZE,
-            vif(meta) { return meta.design.buttonStyle },
-            help: 'Radio 的尺寸，仅在按钮样式有效'
+            options: options({ 'el-radio': '默认', 'el-radio-button': '按钮' }),
+            value: 'el-radio',
+            help: '请选择单选框展示的样式'
           },
+          Props.size({
+            help: 'Radio 的尺寸，仅在按钮样式有效',
+            vif: meta => meta.optionTag === 'el-radio-button'
+          }),
           Props.dataType(),
-          Props.staticData(),
+          ...Props.staticData(),
           Props.dynamicData(),
           ...Props.initApi(meta),
-          Props.valueKey(null, meta),
-          Props.labelKey(null, meta),
+          Props.valueKey(),
+          Props.labelKey(),
           ...Props.eventBtn()
         ]
       },
       {
         group: '高级配置',
-        groupType: 'collapse',
         properties: [
           {
             label: '字体颜色',
-            mapping: 'porps.text-color',
+            mapping: 'props.text-color',
             type: 'color',
             value: '',
-            vif(meta) { return meta.design.buttonStyle },
+            vif: meta => meta.optionTag === 'el-radio-button',
             help: '按钮形式的 Radio 激活时的文本颜色'
           },
           {
             label: '填充颜色',
-            mapping: 'porps.text-color',
+            mapping: 'props.text-color',
             type: 'color',
             value: '',
-            vif(meta) { return meta.design.buttonStyle },
+            vif: meta => meta.optionTag === 'el-radio-button',
             help: '按钮形式的 Radio 激活时的填充色和边框色'
           },
-          Props.classList(),
+          Props.class(),
           Props.vif(),
           Props.disabled()
         ]
