@@ -25,55 +25,29 @@ class Metadata {
         style: {
           height: 'auto',
           width: '100%'
-        },
-      },
-      children: [],
-      events: {
-        methods: {
-          id: 'methods',
-          label: '编排函数',
-          children: []
-        },
-        codeMethods: {
-          id: 'codeMethods',
-          label: '自定义函数',
-          children: []
-        },
-        pageInit: {
-          id: 'PageInit',
-          label: '页面初始化',
-          children: []
-        },
-        pageDestory: {
-          id: 'PageDestory',
-          label: '页面销毁',
-          children: []
-        },
-        pageActivated: {
-          id: 'PageActivated',
-          label: '页面激活',
-          children: []
         }
       },
+      children: [],
+      actions: {
+        init: [],
+        destory: [],
+        activated: []
+      },
+      methods: [],
       apis: [],
       models: [{
         id: 'props',
         name: 'props',
         label: '属性参数',
         type: 'system',
-        fields: [
-
-        ]
+        fields: []
       }, {
-        id: 'pageData',
-        name: 'pageData',
+        id: 'data',
+        name: 'data',
         label: '自定义数据模型',
-        fields: [
-
-        ]
+        fields: []
       }]
     }
-   
     Object.assign(this.meta, emptyMeta)
   }
 
@@ -124,8 +98,8 @@ class Metadata {
             return true
           }
         }
-        if (Array.isArray(item.slots) && item.slots.length) {
-          if (eachFn(item.slots)) {
+        if (typeof item.slots === 'object') {
+          if (eachFn(Object.values(item.slots))) {
             path.push(item)
             return true
           }
@@ -175,10 +149,7 @@ class Metadata {
       } else if (type(child.children) === 'object') {
         this.compEach([child.children], fn)
       }
-      if (Array.isArray(child.slots)) {
-        this.compEach(child.slots, fn)
-      }
-      if(typeof child.slots === 'object'){
+      if (typeof child.slots === 'object') {
         this.compEach(Object.values(child.slots), fn)
       }
       if (Array.isArray(child.columns)) {
@@ -279,13 +250,6 @@ class Metadata {
         context.uuid(item.name, parseInt(item.uuid.split('_').pop()) - 1)
       }
     })
-    if (!this.meta.events.pageActivated) {
-      this.meta.events.pageActivated = {
-        id: 'PageActivated',
-        label: '页面激活',
-        children: []
-      }
-    }
   }
 
   /**

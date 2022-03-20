@@ -1,3 +1,4 @@
+import { defineComponent, h } from 'vue'
 import XRender from './render/render.js'
 import SvgIcon from './svg-icon/index.vue'
 import MetaForm from './meta-form/MetaForm.vue'
@@ -18,6 +19,12 @@ export default {
     app.component(JsonEditor.name, JsonEditor)
     app.component(CssEditor.name, CssEditor)
     app.component(ListEditor.name, ListEditor)
+
+    app.component('DesignSlot', defineComponent(function DesignSlot(props,context) {
+      return ()=> {
+        return  h('div',{ class:['design-slot', props.uid]}, context.slots)
+      }
+    }))
     //布局
     app.use(Layout)
   }

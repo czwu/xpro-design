@@ -78,7 +78,7 @@ context.registerComponent('input',{
             },
             onChange(val,meta) {
               if (val) {
-                const prepend = context.getConfig('layout', meta)
+                const prepend = context.getConfig('slot')
                 prepend.slot = 'prepend'
                 meta.slots.prepend = prepend
                 return true
@@ -99,7 +99,7 @@ context.registerComponent('input',{
             },
             onChange(val,meta) {
               if (val) {
-                const append = context.getConfig('layout', meta)
+                const append = context.getConfig('slot')
                 append.slot = 'prepend'
                 meta.slots.append = append
                 return true

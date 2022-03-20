@@ -10,7 +10,6 @@ import { treeEach } from './util'
   * @param {String} type  解析模式 [runtime, design] , 默认为运行时解析,  当值未design时,是设计器的解析模式,设计器中可以忽略许多配置解析
   */
 export default function pretreatment(meta, ctx, type = 'runtime') {
-  const i18n = useI18n()
   ctx.isRuntime = type === 'runtime'
   meta.props = meta.props || {}
   meta.props.class = meta.props.class || []
@@ -33,7 +32,7 @@ export default function pretreatment(meta, ctx, type = 'runtime') {
 
   // 如果配置了slotText,则将slotText 放入 childdren中
   if (meta.slotText) {
-      meta.children = ctx.isRuntime ? `{{$t("${meta.slotText}")}}` : i18n.t(meta.slotText)
+      meta.children = ctx.isRuntime ? `{{$t("${meta.slotText}")}}` : ctx.t(meta.slotText)
   }
   // 如果配置了disabled
   if (meta.disabled) {
@@ -45,7 +44,7 @@ export default function pretreatment(meta, ctx, type = 'runtime') {
   }
 
   // 处理选项数据信息
-  // optionsConvert(meta, ctx)
+  optionsConvert(meta, ctx)
   // 其他组件各自的代码编译预处理程序
   // componentsPretreatment(meta, ctx, type, pretreatment)
   // 处理国际化配置信息meta,'
@@ -63,17 +62,17 @@ function i18nConvert(meta, ctx) {
   // 设计时 国际化转换处理
   if (meta.props) {
     if (meta.props.title) {
-      meta.props.title = i18n.t(meta.props.title)
+      meta.props.title = ctx.t(meta.props.title)
     }
     if (meta.props.label) {
-      meta.props.label = i18n.t(meta.props.label)
+      meta.props.label = ctx.t(meta.props.label)
     }
     if (meta.props['active-text']) {
       if (ctx.isRuntime) {
         meta.props[':active-text'] = `$t("${meta.props['active-text']}")`
         delete meta.props['active-text']
       } else {
-        meta.props['active-text'] = i18n.t(meta.props['active-text'])
+        meta.props['active-text'] = ctx.t(meta.props['active-text'])
       }
     }
     if (meta.props['inactive-text']) {
@@ -81,7 +80,7 @@ function i18nConvert(meta, ctx) {
         meta.props[':inactive-text'] = `$t("${meta.props['inactive-text']}")`
         delete meta.props['inactive-text']
       } else {
-        meta.props['inactive-text'] = i18n.t(meta.props['inactive-text'])
+        meta.props['inactive-text'] = ctx.t(meta.props['inactive-text'])
       }
     }
     if (meta.props.placeholder) {
@@ -92,12 +91,12 @@ function i18nConvert(meta, ctx) {
           meta.props[':placeholder'] = `$t("${meta.props.placeholder}")`
         }
       } else {
-        meta.props.placeholder = i18n.t(meta.props.placeholder)
+        meta.props.placeholder = ctx.t(meta.props.placeholder)
       }
     }
   }
   if (typeof meta.children === 'string') {
-    meta.children = i18n.t(meta.children)
+    meta.children = ctx.t(meta.children)
   }
 }
 
@@ -111,26 +110,25 @@ function isStrVal(val) {
  * @param {Object} ctx  编译上下文
  */
 function optionsConvert(meta, ctx) {
-  const childTag = meta.childTag
+  const optionTag = meta.optionTag
   if (meta.dataSourceType === 'static' && meta.options) {
-    const datatype = findFieldDataType(ctx, meta.design.vmodel)
-    meta.children = meta.design.options.map(opt => {
+    const datatype = findFieldDataType(ctx, meta.vmodel)
+    meta.children = meta.options.map(opt => {
       const val = datatype === 'Integer' ? opt.value * 1 : opt.value
       return {
-        name: childTag,
+        name: optionTag,
         props: {
-          label: meta.name === 'select' ? i18n.t(opt.label) : val,
+          label: meta.name === 'select' ? ctx.t(opt.label || '') : val,
           value: meta.name === 'select' ? val : ''
         },
-        design: {},
-        children: meta.name === 'select' ? null : i18n.t(opt.label)
+        children: meta.name === 'select' ? null : ctx.t(opt.label || '')
       }
     })
   }
 }
 
 function findFieldDataType(ctx, fieldId) {
-  if (!ctx.pageMeta) {
+  if (!ctx.pageMeta || !fieldId) {
     return
   }
   const model = ctx.pageMeta.models.find(m => m.id === fieldId.split('.')[0])
@@ -155,3 +153,5 @@ function layoutConvert(meta, ctx, type) {
     }
   }
 }
+
+

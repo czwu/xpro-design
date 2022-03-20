@@ -13,7 +13,6 @@ export default {
         meterialGroups.forEach((groupElement) => {
             var ops = {
                 animation: 400,
-                ghostClass: "sortable-ghost",
                 sort: false,
                 group: {
                     name: "material", // 组名
@@ -51,9 +50,6 @@ export default {
     initDrag(el, props) {
         var ops = {
             animation: 300,
-            dragClass: 'sortable-drag',
-            chosenClass: 'sortable-chosen',
-            ghostClass: 'sortable-ghost',
             dataIdAttr: 'uuid',
             filter: '.layout-tools',
             fallbackOnBody: false,

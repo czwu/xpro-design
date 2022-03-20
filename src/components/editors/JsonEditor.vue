@@ -77,10 +77,11 @@ export default {
       }
     },
     loadMonacoEditor() {
-      const str = JSON.stringify(this.json).replace(
+      let str = JSON.stringify(this.json).replace(
         /"selected":true,/g,
         ""
       );
+      str = beautifier.js(str)
       loadMonaco((monaco) => {
         if (this.editor) {
           this.editor.setValue(str);
@@ -88,15 +89,12 @@ export default {
           this.editor = monaco.editor.create(this.$refs.editorEl, {
             value: str,
             wrappingIndent: "indent",
-            tabSize: 2,
+            // tabSize: 2,
             theme: "vs-dark",
             language: "json",
-            automaticLayout: true,
+            // automaticLayout: true,
           });
         }
-        setTimeout(() => {
-          this.editor.getAction("editor.action.formatDocument").run();
-        }, 50);
       });
     },
     exportJsonFile() {

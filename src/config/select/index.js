@@ -7,7 +7,7 @@ context.registerComponent('select', {
       uid: '',
       name: 'select',
       dataSourceType:'static',
-      childTag:'el-option',
+      optionTag:'el-option',
       props: {
        
       },

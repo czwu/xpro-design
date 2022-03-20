@@ -139,9 +139,7 @@ function treeEach(list, fn, childKey = 'children') {
 
 function vueTemplate(str) {
   return `<template>
-    <div>
       ${str}
-    </div>
   </template>`
 }
 

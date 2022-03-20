@@ -469,7 +469,7 @@ export default {
         },
         {
           label: '提示文本',
-          mapping: 'tipText',
+          mapping: 'tooltip.content',
           type: 'i18n',
           value: '',
           placeholder:'请设置提示文本',
@@ -478,7 +478,7 @@ export default {
         },
         {
           label: '提示主题',
-          mapping: 'tipEffect',
+          mapping: 'tooltip.effect',
           type: 'radio',
           options: options({ dark: '黑', light: '白' }),
           value: 'dark',
@@ -487,7 +487,7 @@ export default {
         },
         {
           label: '提示位置',
-          mapping: 'tipPlacement',
+          mapping: 'tooltip.placement',
           type: 'select',
           value: 'top',
           help: 'Tooltip 的出现位置',

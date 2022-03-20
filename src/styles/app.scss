@@ -61,7 +61,10 @@ li {
 }
 
 #design_panel {
-
+    .design-slot{
+      background-color: #fbeda78a;
+      border:0px !important
+    }
     .layout.page{
         padding:20px 0px;
         overflow-y:auto;
@@ -187,7 +190,7 @@ li {
 }
 .sortable-ghost {
     border: 1px dashed #1659c7 !important;
-    background: #fff !important;
+    background: #ddd !important;
     cursor:no-drop !important;
     * {
         visibility: hidden;

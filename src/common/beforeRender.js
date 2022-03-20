@@ -1,6 +1,6 @@
 import context from '@/common/context'
 import metadata from '../common/metadata'
-import pretreatment from '@/compile/pretreatment'
+import pretreatment from '@/compile/common/pretreatment'
 import { emitter, EVENTS } from '@/common/bus'
 import { getComponentId2 } from '@/utils/util'
 import dragger from '@/common/dragger'
@@ -18,7 +18,7 @@ export default function beforeRender(renderMeta = {}, h) {
     if (renderMeta.selected) {
         renderMeta.props.class.push('design-selected')
     }
-    pretreatment(renderMeta, {},  'design')
+    pretreatment(renderMeta, {t:(s)=>s},  'design')
     
     if (props.columns) {
         props.columns = XEUtils.clone(props.columns, true)
@@ -27,7 +27,7 @@ export default function beforeRender(renderMeta = {}, h) {
     //   pretreatment(renderMeta, ctx, 'design')
 
     // 设计模式给所有渲染组件的dom添加 uuid标识
-
+  
     if (renderMeta.uid) {
         props.uid = renderMeta.uid
     }
@@ -37,7 +37,7 @@ export default function beforeRender(renderMeta = {}, h) {
             renderMeta.props[renderMeta.design.bindDataAttr] = context.components[renderMeta.name].getMockData(renderMeta)
         }
     }
-    if (['layout'].includes(renderMeta.name)) {
+    if (['layout','slot'].includes(renderMeta.name)) {
         // 设计面板模式下 给设计时的组件配置拖拽
         props.onVnodeMounted = function (vnode) {
             dragger.initDrag(vnode.el, vnode.component)
