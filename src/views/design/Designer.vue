@@ -35,6 +35,7 @@
           :beforeRender="beforeRender"
           @mousedown="clickHandler"
         />
+        <float-bar></float-bar>
       </div>
     </div>
     <div class="flex-col properties">
@@ -50,12 +51,14 @@ import { defineComponent, ref, reactive } from "vue";
 import Properties from "./Properties";
 import PageMeta from "@/common/metadata";
 import beforeRender from "@/common/beforeRender";
+import FloatBar from "./plugins/FloatBar.vue";
 import "@/config/index.js";
 import { getComponentId,getComponentId2 } from "@/utils/util";
 export default defineComponent({
   setup() {
     const dragging = ref("");
     const activePage = ref("");
+    const floatBarVisible = ref(false);
     const pages = reactive([]);
     const pageMeta = PageMeta.meta;
     function clickHandler(e) {
@@ -95,6 +98,7 @@ export default defineComponent({
     Properties,
     Materials,
     Tools,
+    FloatBar
   },
   methods: {
     pageChange() {},

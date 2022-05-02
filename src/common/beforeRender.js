@@ -8,7 +8,7 @@ import Vue from 'vue'
 import XEUtils from "xe-utils";
 export default function beforeRender(renderMeta = {}, h) {
     const tags = ['div', 'i', 'template']
-    if (tags.includes(renderMeta.name)) {
+    if (tags.includes(renderMeta.name) && !renderMeta.isRoot) {
         return
     }
     // 处理 设计模式 组件选中状态, 添加selected 样式
@@ -37,7 +37,7 @@ export default function beforeRender(renderMeta = {}, h) {
             renderMeta.props[renderMeta.design.bindDataAttr] = context.components[renderMeta.name].getMockData(renderMeta)
         }
     }
-    if (['layout','slot'].includes(renderMeta.name)) {
+    if (['row','slot','col','div'].includes(renderMeta.name)) {
         // 设计面板模式下 给设计时的组件配置拖拽
         props.onVnodeMounted = function (vnode) {
             dragger.initDrag(vnode.el, vnode.component)

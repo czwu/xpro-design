@@ -18,7 +18,8 @@ class Metadata {
     const isComponent = getUrlParams('type') === 'component'
     const emptyMeta = {
       uid: this.meta?.uid || (isComponent ? 'comp-' : 'page-') + uuid(8),
-      name: 'layout',
+      name: 'div',
+      tag:'div',
       isComponent,
       isRoot: true,
       props: {
@@ -124,10 +125,10 @@ class Metadata {
     const newNode = JSON.parse(JSON.stringify(comp))
     const idMap = {}
     this.compEach([newNode], (node) => {
-      if (node.uuid) {
-        const newId = context.uuid(node.name)
-        idMap[node.uuid] = newId
-        node.uuid = newId
+      if (nodeuid) {
+        const newId = contextuid(node.name)
+        idMap[node.uid] = newId
+        node.uid = newId
       }
       if (node.pid) {
         node.pid = idMap[node.pid]
@@ -155,7 +156,7 @@ class Metadata {
       if (Array.isArray(child.columns)) {
         if (child.name === 'grid') {
           treeEach(child.columns, col => {
-            if (col.config && col.config.uuid) {
+            if (col.config && col.config.uid) {
               this.compEach([col.config], fn)
             }
           })
@@ -204,7 +205,7 @@ class Metadata {
       context.activeComponent.selected = true
       context.activeCompPath = compPath
       // 触发面板组件被选中事件, 并将 组件与其路径当做参数发送出去
-      emitter.emit(EVENTS.COMPONENT_SELECTED, compPath[0], compPath[1], e)
+      emitter.emit(EVENTS.COMPONENT_SELECTED, compPath[0], e)
     }
   }
 
@@ -246,8 +247,8 @@ class Metadata {
    */
   updateIdStore() {
     this.compEach(this.meta.children, (item) => {
-      if (item.uuid) {
-        context.uuid(item.name, parseInt(item.uuid.split('_').pop()) - 1)
+      if (item.uid) {
+        context.uid(item.name, parseInt(item.uid.split('_').pop()) - 1)
       }
     })
   }

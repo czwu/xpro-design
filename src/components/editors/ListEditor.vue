@@ -6,7 +6,7 @@
                     <el-icon-sort />
                 </el-icon>
             </div>
-            <template v-for="col in columns">
+            <template v-for="col in columns" :key="col.mapping" >
                 <meta-field
                     class="meta-field"
                     v-if="check(col, row)"

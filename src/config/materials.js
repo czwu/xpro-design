@@ -7,8 +7,9 @@
       icon: 'layouts',
       children: [
         {
-          name: 'layout',
-          label: '分栏'
+          icon:'layout',
+          name: 'row',
+          label: '行'
         },
         {
           name: 'form',

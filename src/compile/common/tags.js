@@ -24,7 +24,7 @@ export default {
     'popup': 'popup',
     'layout': 'layout',
     'panel': 'panel',
-    'form': 'v-form',
+    'form': 'el-form',
     'form-item': 'el-form-item',
     'text': 'div',
     // 内置组件

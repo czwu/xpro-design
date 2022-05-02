@@ -7,6 +7,10 @@ const viewMap = {
   input:"ElInput",
   select:'ElSelect',
   slot:'DesignSlot',
+  form:'ElForm',
+  row:'ElRow',
+  col:'ElCol',
+  'form-item':'ElFormItem',
   'radio-group':'el-radio-group',
   'checkbox-group':'el-checkbox-group',
 };
