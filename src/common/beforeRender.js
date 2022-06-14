@@ -14,6 +14,7 @@ export default function beforeRender(renderMeta = {}, h) {
     // 处理 设计模式 组件选中状态, 添加selected 样式
     const props = renderMeta.props = Object.assign({
         class: renderMeta.class || [],
+        readonly:true
     }, renderMeta.props)
     if (renderMeta.selected) {
         renderMeta.props.class.push('design-selected')
@@ -27,7 +28,6 @@ export default function beforeRender(renderMeta = {}, h) {
     //   pretreatment(renderMeta, ctx, 'design')
 
     // 设计模式给所有渲染组件的dom添加 uuid标识
-  
     if (renderMeta.uid) {
         props.uid = renderMeta.uid
     }
@@ -42,6 +42,13 @@ export default function beforeRender(renderMeta = {}, h) {
         props.onVnodeMounted = function (vnode) {
             dragger.initDrag(vnode.el, vnode.component)
         }
+    }
+    if(['date-picker','time-picker'].includes(renderMeta.name)){
+        //修复两组件dom未添加uid属性的问题
+        props.onVnodeUpdated = function (vnode) {
+            vnode.el.parentElement.children[0].setAttribute('uid',renderMeta.uid)
+        }
+        
     }
 
     if (renderMeta.mapping) {

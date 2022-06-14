@@ -157,7 +157,7 @@ function compileSlots(slots, ctx) {
  */
 function compileDynamicChildren(meta, ctx) {
   const dataVariable = get(meta, 'api.dataVariable') || meta.dataVariable
-  if (dataName && meta.optionTag) {
+  if (dataVariable && meta.optionTag && ['select', 'checkbox-group', 'radio-group', 'el-dropdown-menu'].includes(meta.name)) {
     const tag = meta.optionTag
     const label = `item.${meta.labelKey || 'label'}`
     const value = `item.${meta.valueKey || 'value'}`

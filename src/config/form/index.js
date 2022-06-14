@@ -17,10 +17,10 @@ context.registerComponent("form", {
       ref: true,
     };
   },
-  getTools(meta) {
+  getFloatButtons(meta) {
     return [
       {
-        icon: "p-icon-plus-circle",
+        icon: "ElIconPlus",
         label: "添加表单项",
         click() {
           showFormItemTree(meta);

@@ -1,26 +1,34 @@
 a<template>
   <div class="floating-buttons" :style="styleObj" v-show="visible">
     <template v-for="(btn, i) in buttons" :key="i">
-      <el-icon @click="btn.click">
-        <component :is="btn.icon"></component>
-      </el-icon>
+      <el-tooltip :content="btn.label">
+        <el-icon @click="btn.click">
+          <component :is="btn.icon"></component>
+        </el-icon>
+      </el-tooltip>
     </template>
-    <el-icon @click="openActionDesign" v-show="hasEvents">
-      <el-icon-setting></el-icon-setting>
-    </el-icon>
-    <el-icon @click="copy" v-show="showDelelte && canCopy">
-      <el-icon-document-copy></el-icon-document-copy>
-    </el-icon>
-    <el-icon @click="remove" v-show="showDelelte">
-      <el-icon-delete> </el-icon-delete>
-    </el-icon>
+    <el-tooltip content="事件编排" v-show="hasEvents">
+      <el-icon @click="openActionDesign">
+        <el-icon-setting></el-icon-setting>
+      </el-icon>
+    </el-tooltip>
+    <el-tooltip content="复制" v-show="showDelelte && canCopy">
+      <el-icon @click="copy">
+        <el-icon-document-copy></el-icon-document-copy>
+      </el-icon>
+    </el-tooltip>
+    <el-tooltip content="删除" v-show="showDelelte">
+      <el-icon @click="remove">
+        <el-icon-delete> </el-icon-delete>
+      </el-icon>
+    </el-tooltip>
   </div>
 </template>
 <script>
 import context from "@/common/context";
 import Metadata from "@/common/metadata";
 import { getOffset } from "@/utils/util";
-import { emitter, EVENTS } from '@/common/bus'
+import { emitter, EVENTS } from "@/common/bus";
 export default {
   name: "FloatBar",
   data() {
@@ -36,7 +44,6 @@ export default {
     };
   },
   created() {
-
     emitter.on(EVENTS.COMPONENT_SELECTED, (comp) => {
       if (comp.isRoot) {
         this.visible = false;
@@ -49,7 +56,9 @@ export default {
       }
 
       this.compId = comp.uid;
-      const $el = document.querySelector(`[uid='${comp.uid}']`);
+      const $el =
+        document.querySelector(`[uid='${comp.uid}']`) ||
+        document.querySelector(`.${comp.uid}`);
       if (!$el) {
         console.error("not find $el", this.compId);
       }
@@ -59,23 +68,25 @@ export default {
       this.styleObj = {
         top:
           pos.top -
-          this.fix.top + 2 + $el.offsetHeight -
+          this.fix.top +
+          2 +
+          $el.offsetHeight -
           document.querySelector("#design_panel").children[0].scrollTop +
           "px",
-        left: (pos.left + 50 + this.fix.left) + 'px'
+        left: pos.left + 50 + this.fix.left + "px",
       };
-      if (component && component.getTools) {
-        const metadata = window.getMetaManager();
-        this.tools = component.getTools(metadata.getComponentById(this.compId));
+      if (component && component.getFloatButtons) {
+        this.buttons = component.getFloatButtons(
+          Metadata.getComponentById(this.compId)
+        );
       } else {
-        this.tools = [];
+        this.buttons = [];
       }
       this.hasEvents = !!component.getEvents;
       this.visible = true;
       this.$nextTick(() => {
-        debugger
-        const left = width + pos.left - this.$el.offsetWidth - this.fix.left
-        this.styleObj.left = left < 0 ? '5px' : left + 'px'
+        const left = width + pos.left - this.$el.offsetWidth - this.fix.left;
+        this.styleObj.left = left < 0 ? "5px" : left + "px";
       });
     });
   },
@@ -130,11 +141,11 @@ export default {
   border-radius: 0 0 2px 2px;
   i {
     padding: 5px;
-    color: #EEE;
+    color: #eee;
     font-size: 12px;
     cursor: pointer;
-    &:hover{
-      color:#FFF
+    &:hover {
+      color: #fff;
     }
   }
   .el-icon-delete {

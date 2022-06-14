@@ -2,10 +2,10 @@ import { defineComponent, h } from 'vue'
 import XRender from './render/render.js'
 import SvgIcon from './svg-icon/index.vue'
 import MetaForm from './meta-form/MetaForm.vue'
-import Layout from './ui/layout/index'
 import JsonEditor from './editors/JsonEditor'
 import CssEditor from './editors/CssEditor'
 import ListEditor from './editors/ListEditor'
+import IconSelect from './icon-select/index'
 
 export default {
   install: (app) => {
@@ -19,6 +19,7 @@ export default {
     app.component(JsonEditor.name, JsonEditor)
     app.component(CssEditor.name, CssEditor)
     app.component(ListEditor.name, ListEditor)
+    app.component(IconSelect.name, IconSelect)
 
     app.component('DesignSlot', defineComponent(function DesignSlot(props,context) {
       return ()=> {
@@ -26,6 +27,5 @@ export default {
       }
     }))
     //布局
-    app.use(Layout)
   }
 }

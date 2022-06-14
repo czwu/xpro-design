@@ -13,6 +13,9 @@ const viewMap = {
   'form-item':'ElFormItem',
   'radio-group':'el-radio-group',
   'checkbox-group':'el-checkbox-group',
+  switch:'ElSwitch',
+  'date-picker':'ElDatePicker',
+  'time-picker':'ElTimePicker'
 };
 const getNodes = (meta, context, beforeRender) => {
   if (isVNode(meta)) {

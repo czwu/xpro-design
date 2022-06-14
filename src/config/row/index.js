@@ -1,7 +1,6 @@
-import context from "@/common/context";
-import { options, treeEach } from "@/utils/util";
-import Props from "../props";
-import { emitter, EVENTS } from "@/common/bus";
+import context from '@/common/context'
+import { options } from '@/utils/util'
+import Props from '../props'
 context.registerComponent('row',{
   // 组件默认配置
   getConfig() {
